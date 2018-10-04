@@ -7,7 +7,7 @@
         <meta charset="utf-8">
         
         <!-- TITLE OF SITE-->
-        <title> Al Rayhan </title>
+        <title>{ This Too Shall Parse }</title>
         
         <!-- META TAG -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,6 +62,11 @@
           <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
           <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
+        <link   rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+                integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+                crossorigin=""/>
+         <!-- Make sure you put this AFTER Leaflet's CSS -->
+        <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
         
     </head>
     <body>
@@ -94,8 +99,8 @@
                                       <ul id="nav-mobile" class="side-nav">                                  
                                         <li><a href="index.html">Resume</a></li>                                        
                                         <li><a href="project.html">Projects</a></li>
-                                        <li><a href="cover-latter.html">Cover Letter</a></li>
-                                        <li><a href="blog.html">Blog</a></li>
+<!--                                         <li><a href="cover-latter.html">Cover Letter</a></li>
+                                        <li><a href="blog.html">Blog</a></li> -->
                                         <li><a href="contact.html">Contact</a></li>
                                       </ul>
                                       <a href="#" data-activates="nav-mobile" class="button-collapse  "><i class="mdi-navigation-menu"></i></a>
@@ -132,7 +137,7 @@
                                 <div class="col m12 s12 l9 info wow fadeIn a2" data-wow-delay="0.2s" >
                                     <div class="section-item-details">
                                         <div class="personal">
-                                            <h4><a href="tel:021-204-3860">(021)-204-3860</a></h4> <!-- Number -->             
+                                            <h4><a href="tel:021-204-3860">(021) 204-3860</a></h4> <!-- Number -->             
                                             <span>mobile</span> 
                                         </div>
                                  <!--        <div class="work">
@@ -224,7 +229,8 @@
                     <div class="row">
                         <!-- Start map -->
                         <div class="section-wrapper g-map z-depth-1">
-                            <div id="map"> </div>
+                            <!-- <div id="map"> </div> -->
+                            <div id="location" style="height: 400px"></div>
                         </div> 
                         
                         <!--=======================================
@@ -307,6 +313,12 @@
         
         <!-- Customized js -->
         <script src="assets/js/init.js"></script>
+
+        <script type="text/javascript">
+            var location = L.map('location').setView([0, 0], 4);
+            L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(location);
+            location.setView([-36.826406, 174.429745], 17);
+        </script>
     
     </body>
 </html>
