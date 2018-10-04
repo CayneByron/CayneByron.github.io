@@ -53,7 +53,7 @@ a {
 }
 
 .content-a {
-  color: #039be5;
+  color: #039be5 !important;
 }
 
 .clear {
