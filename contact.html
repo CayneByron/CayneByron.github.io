@@ -229,14 +229,13 @@
                     <div class="row">
                         <!-- Start map -->
                         <div class="section-wrapper g-map z-depth-1">
-                            <!-- <div id="map"> </div> -->
                             <div id="location-map" style="height: 400px"></div>
                         </div> 
 
                         <script type="text/javascript">
                             var locationMap = L.map('location-map').setView([0, 0], 4);
                             L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(locationMap);
-                            locationMap.setView([-36.826406, 174.429745], 17);
+                            locationMap.setView([-36.826406, 174.429745], 14);
                         </script>
                         
                         <!--=======================================
@@ -252,7 +251,7 @@
                                 <h2>Contact</h2>                                
                                 <div class="contact-form" id="contact">   
                                     <div class="row">                                   
-                                        <form role="form" id="contactForm" data-toggle="validator" method="post" action="https://poolnimbus.herokuapp.com/contactus">
+                                        <form role="form" id="contactForm" data-toggle="validator" method="post" action="https://shielded-brook-19084.herokuapp.com/contactus">
                                             <div id="msgSubmit" class="h3 text-center hidden"></div>
           <!--                                   <div class="input-field col s12">
                                                 <label for="name" class="h4">Name *</label>
@@ -308,7 +307,7 @@
         <script src="assets/js/wow.min.js"></script>
         
         <!-- Map api -->
-        <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
+        <!-- <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script> -->
         
         <!-- Masonry js-->
         <script src="assets/js/masonry.pkgd.js"></script>
