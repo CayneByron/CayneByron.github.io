@@ -51,6 +51,9 @@ p {
 a {
   color: #ffffff;
 }
+.custom-content a {
+    color: #039be5;
+}
 .clear {
   clear: both;
 }
