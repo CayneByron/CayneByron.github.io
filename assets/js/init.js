@@ -55,17 +55,17 @@ $(document).ready(function() {
           CONTACT FORM
     ***************************************************************************/
 
-    $("#contactForm").validator().on("submit", function (event) {
-        if (event.isDefaultPrevented()) {
-            // handle the invalid form...
-            formError();
-            submitMSG(false, "Did you fill in the form properly?");
-        } else {
-            // everything looks good!
-            event.preventDefault();
-            submitForm();
-        }
-    });
+    // $("#contactForm").validator().on("submit", function (event) {
+    //     if (event.isDefaultPrevented()) {
+    //         // handle the invalid form...
+    //         formError();
+    //         submitMSG(false, "Did you fill in the form properly?");
+    //     } else {
+    //         // everything looks good!
+    //         event.preventDefault();
+    //         submitForm();
+    //     }
+    // });
     function submitForm(){
     // Initiate Variables With Form Content
         var name = $("#name").val();
