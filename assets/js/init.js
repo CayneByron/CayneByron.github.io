@@ -109,7 +109,6 @@ $(document).ready(function() {
     /**************************************************************************
        Projects
     **************************************************************************/
-    // $('#portfolio-item').mixItUp();
     
     $('.sa-view-project-detail').on('click', function(event) {
         event.preventDefault();
