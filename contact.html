@@ -250,13 +250,28 @@
                                 
                                 <h2>Contact</h2>                                
                                 <div class="contact-form" id="contact">   
-                                    <div class="row">                                   
-                                        <form role="form" id="contactForm" data-toggle="validator" method="post" action="https://shielded-brook-19084.herokuapp.com/contactus">
+                                    <div class="row">      
+                                        <form method="POST" action="https://formspree.io/caynebyron@gmail.com">
+                                            <div class="input-field col s12">
+                                                <label for="email" class="h4">Email *</label>
+                                                <input class="form-control validate" type="email" name="email" placeholder="Your email">            
+                                            </div>
+                                            
+                                            <div class="input-field col s12">
+                                                <label for="message" class="h4 ">Message *</label>
+                                                <textarea name="message" placeholder="Your message" class="form-control materialize-textarea validate"></textarea>       
+                                            </div>
+
+                                            <button type="submit" id="form-submit" class="btn btn-success">Submit</button>
+                                            <div class="clearfix"></div>
+                                        </form>
+
+           <!--                              <form role="form" id="contactForm" data-toggle="validator" method="post" action="https://shielded-brook-19084.herokuapp.com/contactus">
                                             <div id="msgSubmit" class="h3 text-center hidden"></div>
-          <!--                                   <div class="input-field col s12">
+                                            <div class="input-field col s12">
                                                 <label for="name" class="h4">Name *</label>
                                                 <input type="text" class="form-control validate" id="name" required data-error="NEW ERROR MESSAGE">
-                                            </div> -->
+                                            </div>
                                             <div class="input-field col s12">
                                                 <label for="email" class="h4">Email *</label>
                                                 <input type="email" class="form-control validate" id="email"  required>                
@@ -267,7 +282,7 @@
                                             </div>
                                             <button type="submit" id="form-submit" class="btn btn-success">Submit</button>
                                             <div class="clearfix"></div>                                
-                                        </form>                                     
+                                        </form>    -->                                  
                                     </div> 
                                 </div>
                             </div>                            
