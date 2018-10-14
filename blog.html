@@ -322,7 +322,7 @@
 
                 if (typeof(response.items[i].labels) != "undefined") {
                     for (var j = 0; j < response.items[i].labels.length; j++) {
-                        label += response.items[i].labels[j] + ', ';
+                        label += response.items[i].labels[j] + ' - ';
                     }
                     label = label.substring(0, label.length-2);
                 }
