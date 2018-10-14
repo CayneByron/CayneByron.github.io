@@ -378,9 +378,10 @@
             console.log(response.items.length);
 
             for (var i = 0; i < response.items.length; i++) {
-                console.log(response.items[i]);
+                
 
                 response.items[i].preview_content = content.replace(/<img[^>]*>/g,"");
+                console.log(response.items[i]);
 
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                     <div class="thumbnail z-depth-1 animated">
