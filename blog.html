@@ -47,14 +47,6 @@
         <!-- RESPONSIVE CSS-->
         <link href="assets/css/responsive.css" rel="stylesheet">
 
-        <!-- COLORS -->        
-        <!--<link rel="alternate stylesheet" href="assets/css/colors/red.css" title="red">-->
-        <!--<link rel="alternate stylesheet" href="assets/css/colors/purple.css" title="purple">-->
-        <!--<link rel="alternate stylesheet" href="assets/css/colors/orange.css" title="orange">-->
-        <!--<link rel="alternate stylesheet" href="assets/css/colors/green.css" title="green"> -->
-        <!--<link rel="stylesheet" href="assets/css/colors/lime.css" title="lime">  -->
-
-        
         <!--[if lt IE 9]><script src="assets/js/ie8-responsive-file-warning.js"></script><![endif] -->
         <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -272,61 +264,6 @@
                                     </div>              
                                 </div>
                             </div>
-                            <!-- <div class="col s12 m12 l6 blog-post">
-                                <div class="thumbnail z-depth-1">
-                                    <a href="blog-full-post.html"><img src="https://nzcamping.com/wp-content/uploads/2016/11/Camp-Waipu-Northland.jpg" alt="" class="responsive-img"></a>                                       
-                                    <div class="blog-details">
-                                        <div class="post-title" id="blog-post-3">
-                                            <a href="blog-full-post.html">
-                                                <h2>Music Player Design</h2>
-                                                <span>branding, ui-ux, article</span>
-                                            </a>
-                                        </div> 
-                                        <div class="post-details">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare arcu ac velit ultricies fermentum. Aliquam congue augue a ullamcorper finibus.</p> 
-
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare arcu ac velit ultricies fermentum. Aliquam congue augue a ullamcorper finibus.</p>  
-                                        </div> 
-                                    </div>              
-                                </div>
-                            </div> -->
-                            <!-- <div class="col s12 m12 l6 blog-post">
-                                <div class="thumbnail z-depth-1">
-                                    <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
-                                    <div class="blog-details">
-                                        <div class="post-title" id="blog-post-4">
-                                            <a href="blog-full-post.html">
-                                                <h2>Marketing Partner</h2>
-                                                <span>branding, ui-ux, article</span>
-                                            </a>
-                                        </div> 
-                                        <div class="post-details">
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare arcu ac velit ultricies fermentum. Aliquam congue augue a ullamcorper finibus.</p>                            
-                                        </div> 
-                                    </div>              
-                                </div>
-                            </div> -->
-              <!--               <div class="col s12 m12 l12 blog-post">
-                                <div class="row">
-                                    <div class="thumbnail z-depth-1">                                    
-                                        <div class="featured-img col m12 s12 l6 " id="featured">
-                                            <a href="blog-full-post.html"><img src="assets/images/bb3.jpg" alt="" class="responsive-img z-depth-1"></a>  
-                                        </div> 
-                                        <div class="caption col m12 s12 l6" id="caption">
-                                            <div class="post-details z-depth-1">
-                                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare arcu ac velit ultricies fermentum. Aliquam congue augue a ullamcorper finibus. 
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare arcu ac velit ultricies fermentum.</p>                            
-                                            </div>
-                                            <div class="post-title z-depth-1" id="blog-post-5">
-                                                <a href="blog-full-post.html">
-                                                    <h2>Website Development</h2>
-                                                    <span>branding, ui-ux, article</span>
-                                                </a>
-                                            </div> 
-                                        </div>
-                                    </div>  
-                                </div>
-                            </div> -->
                         </div>
                        <!-- =========================================
                           portfolio Website
@@ -384,6 +321,8 @@
 
                 if (typeof(response.items[i].labels) == "undefined") {
                     response.items[i].labels = "foo";
+                } else {
+                    response.items[i].labels = response.items[i].labels.replace(/,/g,", ");
                 }
 
                 console.log(response.items[i]);
