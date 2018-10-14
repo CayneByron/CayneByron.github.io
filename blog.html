@@ -322,7 +322,7 @@
 
                 if (typeof(response.items[i].labels) != "undefined") {
                     for (var j = 0; j < response.items[i].labels.length; j++) {
-                        label += response.items[i].labels[j] + ' - ';
+                        label += response.items[i].labels[j] + ', ';
                     }
                     label = label.substring(0, label.length-2);
                 }
@@ -357,7 +357,7 @@
                                             <div class="post-title `+ colour_class +`" id="blog-post-` + response.items[i].id +  `">
                                                 <a href="blog-full-post.html">
                                                     <h2>` + response.items[i].title + `</h2>
-                                                    <span>` + response.items[i].labels + `</span>
+                                                    <span>` + label + `</span>
                                                 </a>
                                             </div> 
                                             <div class="post-details">
