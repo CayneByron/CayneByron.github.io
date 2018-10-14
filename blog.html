@@ -373,30 +373,17 @@
 
         <script>
         function handleResponse(response) {
-            //document.getElementById("content").innerHTML += "<h1>" + response.title + "</h1>" + response.content;
-            // console.log(JSON.Stringify(response));
-            console.log(response.items.length);
-
             for (var i = 0; i < response.items.length; i++) {
-                
-
                 response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g,"");
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
                 var regex = /<img.*?src="(.*?)"/;
-                console.log(regex.exec(response.items[i].content));
-                if (regex.exec(response.items[i].content) != null) {
-                    src = regex.exec(response.items[i].content)[1];
-                }
-                console.log(src);
-
-
+                // if (regex.exec(response.items[i].content) != null) {
+                //     src = regex.exec(response.items[i].content)[1];
+                // }
                 if (typeof(response.items[i].labels) == "undefined") {
                     response.items[i].labels = "foo";
                 }
-
-                console.log(response.items[i]);
-
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                     <div class="thumbnail z-depth-1 animated">
                                         <a href="blog-full-post.html"><img src="` + src + `" alt="" class="responsive-img"></a>                                       
