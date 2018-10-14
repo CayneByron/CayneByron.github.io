@@ -384,7 +384,7 @@
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
                 var regex = /<img.*?src="(.*?)"/;
-                console.log(typeof(regex.exec(response.items[i].content));
+                console.log(typeof(regex.exec(response.items[i].content)));
                 if (typeof(regex.exec(response.items[i].content)) != "undefined") {
                     src = regex.exec(response.items[i].content)[1];
                 }
