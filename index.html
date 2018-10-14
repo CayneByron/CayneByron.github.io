@@ -276,7 +276,7 @@
 
         <script>
         function handleResponse(response) {
-            for (var i = response.items.length-1; i > 0; --i) {
+            for (var i = 0; i < response.items.length; i++) {
                 response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g,"");
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
@@ -295,9 +295,6 @@
 
                 console.log(response.items[i]);
                 var rand = Math.floor((Math.random() * 10) + 1);
-
-
-
                 var colour_class = 'green';
                 if (rand == 2) {
                     colour_class = 'red';
@@ -316,8 +313,7 @@
                 }  else if (rand == 0) {
                     colour_class = 'brown';
                 }  else if (rand == 0) {
-                    colour_class = 'blue';
-                } 
+                    
 
 
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
