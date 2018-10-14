@@ -387,13 +387,11 @@
                 }
 
                 console.log(response.items[i]);
-                var colour_class = '';
-                if (i % 1 == 0) {
+                var colour_class = 'green';
+                if (i % 1 == 2) {
                     colour_class = 'red';
-                } else if (i % 2 == 0) {
-                    colour_class = 'grey';
                 } else if (i % 3 == 0) {
-                    colour_class = 'green';
+                    colour_class = 'grey';
                 } else if (i % 4 == 0) {
                     colour_class = 'brown';
                 } else if (i % 5 == 0) {
