@@ -276,7 +276,7 @@
 
         <script>
         function handleResponse(response) {
-            for (var i = 0; i < response.items.length; i++) {
+            for (var i = response.items.length - 1; i >= 0; --i) {
                 response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g,"");
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
