@@ -386,7 +386,9 @@
                 var src = regex.exec(str)[1];
                 console.log(src);
 
-
+                if (typeof(response.items[i].labels) == "undefined") {
+                    response.items[i].labels = "foo";
+                }
 
                 console.log(response.items[i]);
 
@@ -397,7 +399,7 @@
                                             <div class="post-title" id="blog-post-1">
                                                 <a href="blog-full-post.html">
                                                     <h2>` + response.items[i].title + `</h2>
-                                                    <span>branding, ui-ux, article</span>
+                                                    <span>` + response.items[i].labels + `</span>
                                                 </a>
                                             </div> 
                                             <div class="post-details">                                            
