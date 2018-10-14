@@ -315,15 +315,16 @@
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
                 var regex = /<img.*?src="(.*?)"/;
+                var label = '';
                 if (regex.exec(response.items[i].content) != null) {
                     src = regex.exec(response.items[i].content)[1];
                 }
 
-                if (typeof(response.items[i].labels) == "undefined") {
-                    response.items[i].labels = "foo";
-                } else {
-                    debugger;
-                    response.items[i].labels = response.items[i].labels.replace(/,/g,", ");
+                if (typeof(response.items[i].labels) != "undefined") {
+                    for (var j = 0; j < response.items[i].labels.length; j++) {
+                        label += response.items[i].labels[j] + ', ';
+                    }
+                    label = label.substring(0, str.length-2);
                 }
 
                 console.log(response.items[i]);
