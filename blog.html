@@ -322,6 +322,7 @@
                 if (typeof(response.items[i].labels) == "undefined") {
                     response.items[i].labels = "foo";
                 } else {
+                    debugger;
                     response.items[i].labels = response.items[i].labels.replace(/,/g,", ");
                 }
 
