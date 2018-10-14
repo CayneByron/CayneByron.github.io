@@ -276,7 +276,7 @@
 
         <script>
         function handleResponse(response) {
-            for (var i = 0; i < response.items.length; i++) {
+            for (var i = response.items.length-1; i > 0; --i) {
                 response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g,"");
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
@@ -294,24 +294,28 @@
                 }
 
                 console.log(response.items[i]);
+                var rand = Math.floor((Math.random() * 10) + 1);
+
+
+
                 var colour_class = 'green';
-                if (i % 1 == 2) {
+                if (rand == 2) {
                     colour_class = 'red';
-                } else if (i % 3 == 0) {
+                } else if (rand == 0) {
                     colour_class = 'grey';
-                } else if (i % 4 == 0) {
+                } else if (rand == 0) {
                     colour_class = 'brown';
-                } else if (i % 5 == 0) {
+                } else if (rand == 0) {
                     colour_class = 'blue';
-                } else if (i % 6 == 0) {
+                } else if (rand == 0) {
                     colour_class = 'green';
-                } else if (i % 7 == 0) {
+                } else if (rand == 0) {
                     colour_class = 'red';
-                }  else if (i % 8 == 0) {
+                }  else if (rand == 0) {
                     colour_class = 'grey';
-                }  else if (i % 9 == 0) {
+                }  else if (rand == 0) {
                     colour_class = 'brown';
-                }  else if (i % 10 == 0) {
+                }  else if (rand == 0) {
                     colour_class = 'blue';
                 } 
 
