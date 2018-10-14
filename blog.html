@@ -390,19 +390,24 @@
                 var colour_class = '';
                 if (i % 1 == 2) {
                     colour_class = 'red';
-                } else if (i % 2 == 0) {
-                    colour_class = 'grey';
                 } else if (i % 3 == 0) {
-                    colour_class = 'brown';
-                } else if (i % 4 == 0) {
-                    colour_class = 'blue';
-                } else if (i % 5 == 0) {
-                    colour_class = 'green';
-                } else if (i % 6 == 0) {
-                    colour_class = 'red';
-                }  else if (i % 6 == 0) {
                     colour_class = 'grey';
-                }       
+                } else if (i % 4 == 0) {
+                    colour_class = 'brown';
+                } else if (i % 5 == 0) {
+                    colour_class = 'blue';
+                } else if (i % 6 == 0) {
+                    colour_class = 'green';
+                } else if (i % 7 == 0) {
+                    colour_class = 'red';
+                }  else if (i % 8 == 0) {
+                    colour_class = 'grey';
+                }  else if (i % 9 == 0) {
+                    colour_class = 'brown';
+                }  else if (i % 10 == 0) {
+                    colour_class = 'blue';
+                } 
+                console.log(colour_class);
 
 
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
