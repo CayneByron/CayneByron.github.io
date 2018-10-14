@@ -238,7 +238,7 @@
                 <section class="col s12 m12 l8 section" > <!-- Blog section start --> 
                     <div class="row">
                         <div class="blog" id="blog-content">
-                            <div class="col s12 m12 l6 blog-post">
+                            <!-- <div class="col s12 m12 l6 blog-post">
                                 <div class="thumbnail z-depth-1 animated">
                                     <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
                                     <div class="blog-details">
@@ -304,8 +304,8 @@
                                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ornare arcu ac velit ultricies fermentum. Aliquam congue augue a ullamcorper finibus.</p>                            
                                         </div> 
                                     </div>              
-                                </div>
-                            </div>
+                                </div> -->
+                            <!-- </div> -->
               <!--               <div class="col s12 m12 l12 blog-post">
                                 <div class="row">
                                     <div class="thumbnail z-depth-1">                                    
@@ -387,27 +387,42 @@
                 }
 
                 console.log(response.items[i]);
+                var colour_class = '';
+                if (i % 1 == 0) {
+                    colour_class = 'red';
+                } else if (i % 2 == 0) {
+                    colour_class = 'grey';
+                } else if (i % 3 == 0) {
+                    colour_class = 'brown';
+                } else if (i % 4 == 0) {
+                    colour_class = 'blue';
+                } else if (i % 5 == 0) {
+                    colour_class = 'green';
+                } else if (i % 6 == 0) {
+                    colour_class = 'red';
+                }  else if (i % 6 == 0) {
+                    colour_class = 'grey';
+                }       
+
 
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                     <div class="thumbnail z-depth-1 animated">
-                                        <a href="blog-full-post.html"><img src="` + src + `" alt="" class="responsive-img"></a>                                       
+                                        <a href="blog-full-post.html"><img src="` + src + `" alt="" class="responsive-img"></a>
                                         <div class="blog-details">
-                                            <div class="post-title" id="blog-post-` + response.items[i].id +  `">
+                                            <div class="post-title `+ colour_class +`" id="blog-post-` + response.items[i].id +  `">
                                                 <a href="blog-full-post.html">
                                                     <h2>` + response.items[i].title + `</h2>
                                                     <span>` + response.items[i].labels + `</span>
                                                 </a>
                                             </div> 
-                                            <div class="post-details">                                            
-                                                <p>` + response.items[i].preview_content + `</p>                           
+                                            <div class="post-details">
+                                                <p>` + response.items[i].preview_content + `</p>
                                             </div> 
                                         </div>              
                                     </div>
                                 </div>`;
-
                 $('#blog-content').append(blogHtml);
             }
-
         }
     </script>
     <script src="https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s"></script>
