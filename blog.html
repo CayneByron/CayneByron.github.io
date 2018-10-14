@@ -381,12 +381,18 @@
                 
 
                 response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g,"");
-                response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';;
+                response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
+                var regex = /<img.*?src='(.*?)'/;
+                var src = regex.exec(str)[1];
+                console.log(src);
+
+
+
                 console.log(response.items[i]);
 
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                     <div class="thumbnail z-depth-1 animated">
-                                        <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
+                                        <a href="blog-full-post.html"><img src="` + src + `" alt="" class="responsive-img"></a>                                       
                                         <div class="blog-details">
                                             <div class="post-title" id="blog-post-1">
                                                 <a href="blog-full-post.html">
