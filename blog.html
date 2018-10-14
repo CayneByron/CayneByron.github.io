@@ -363,9 +363,6 @@
         <!-- wow js-->
         <script src="assets/js/wow.min.js"></script>
         
-        <!-- Map api -->
-        <script src="//maps.googleapis.com/maps/api/js?v=3.exp"></script>
-        
         <!-- Masonry js-->
         <script src="assets/js/masonry.pkgd.js"></script>
 
@@ -382,6 +379,9 @@
 
             for (var i = 0; i < response.items.length; i++) {
                 console.log(response.items[i]);
+
+                response.items[i].preview_content = content.replace(/<img[^>]*>/g,"");
+
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                     <div class="thumbnail z-depth-1 animated">
                                         <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
@@ -393,7 +393,7 @@
                                                 </a>
                                             </div> 
                                             <div class="post-details">                                            
-                                                <p>` + response.items[i].content + `</p>                           
+                                                <p>` + response.items[i].preview_content + `</p>                           
                                             </div> 
                                         </div>              
                                     </div>
