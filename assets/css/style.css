@@ -410,6 +410,21 @@ body {
 #blog-post-5 {
   background-color: #68c02e;
 }
+.red {
+  background-color: #e95855;
+}
+.grey {
+  background-color: #707281;
+}
+.brown {
+  background-color: #564d52;
+}
+.blue {
+  background-color: #47bac9;
+}
+.green {
+  background-color: #68c02e;
+}
 .post-details {
   background-color: #ffffff;
   padding: 20px 30px;
