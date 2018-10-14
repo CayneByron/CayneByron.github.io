@@ -380,7 +380,7 @@
             for (var i = 0; i < response.items.length; i++) {
                 
 
-                response.items[i].preview_content = content.replace(/<img[^>]*>/g,"");
+                response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g,"");
                 console.log(response.items[i]);
 
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
