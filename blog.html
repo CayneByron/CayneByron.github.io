@@ -378,17 +378,21 @@
                 response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '...';
                 var src = 'assets/images/blog1.jpg';
                 var regex = /<img.*?src="(.*?)"/;
-                // if (regex.exec(response.items[i].content) != null) {
-                //     src = regex.exec(response.items[i].content)[1];
-                // }
+                if (regex.exec(response.items[i].content) != null) {
+                    src = regex.exec(response.items[i].content)[1];
+                }
+
                 if (typeof(response.items[i].labels) == "undefined") {
                     response.items[i].labels = "foo";
                 }
+
+                console.log(response.items[i]);
+
                 var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                     <div class="thumbnail z-depth-1 animated">
                                         <a href="blog-full-post.html"><img src="` + src + `" alt="" class="responsive-img"></a>                                       
                                         <div class="blog-details">
-                                            <div class="post-title" id="blog-post-1">
+                                            <div class="post-title" id="blog-post-` + `">
                                                 <a href="blog-full-post.html">
                                                     <h2>` + response.items[i].title + `</h2>
                                                     <span>` + response.items[i].labels + `</span>
