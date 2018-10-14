@@ -374,7 +374,14 @@
         <!-- Customized js -->
         <script src="assets/js/init.js"></script>
 
-
+        <script>
+        function handleResponse(response) {
+            //document.getElementById("content").innerHTML += "<h1>" + response.title + "</h1>" + response.content;
+            console.log(JSON.Stringify(response));
+            console.log(response);
+        }
+    </script>
+    <script src="https://www.googleapis.com/blogger/v3/blogs/3213900/posts/8398240586497962757?callback=handleResponse&key=YOUR-API-KEY"></script>
     </body>
 </html>
 
