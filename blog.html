@@ -360,6 +360,42 @@
         <!-- materialize js-->
         <script src="assets/js/materialize.min.js"></script>
         
+        <script>
+            function handleResponse(response) {
+                //document.getElementById("content").innerHTML += "<h1>" + response.title + "</h1>" + response.content;
+                // console.log(JSON.Stringify(response));
+                console.log(response.items.length);
+
+                for (var i = 0; i < response.items.length; i++) {
+                    console.log(response.items[i]);
+                    console.log(response.items[i].title);
+                    console.log(response.items[i].content);
+                    console.log('heelo?');
+                    var blogHtml = `<div class="col s12 m12 l6 blog-post">
+                                        <div class="thumbnail z-depth-1 animated">
+                                            <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
+                                            <div class="blog-details">
+                                                <div class="post-title" id="blog-post-1">
+                                                    <a href="blog-full-post.html">
+                                                        <h2>` + response.items[i].title + `</h2>
+                                                        <span>branding, ui-ux, article</span>
+                                                    </a>
+                                                </div> 
+                                                <div class="post-details">                                            
+                                                    <p>` + response.items[i].content + `</p>                           
+                                                </div> 
+                                            </div>              
+                                        </div>
+                                    </div>`;
+
+                    console.log(blogHtml);
+                    $('#blog-content').append(blogHtml);
+                }
+
+            }
+        </script>
+    <script src="https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s"></script>
+
         <!-- wow js-->
         <script src="assets/js/wow.min.js"></script>
         
@@ -374,41 +410,7 @@
         <!-- Customized js -->
         <script src="assets/js/init.js"></script>
 
-        <script>
-        function handleResponse(response) {
-            //document.getElementById("content").innerHTML += "<h1>" + response.title + "</h1>" + response.content;
-            // console.log(JSON.Stringify(response));
-            console.log(response.items.length);
 
-            for (var i = 0; i < response.items.length; i++) {
-                console.log(response.items[i]);
-                console.log(response.items[i].title);
-                console.log(response.items[i].content);
-                console.log('heelo?');
-                var blogHtml = `<div class="col s12 m12 l6 blog-post">
-                                    <div class="thumbnail z-depth-1 animated">
-                                        <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
-                                        <div class="blog-details">
-                                            <div class="post-title" id="blog-post-1">
-                                                <a href="blog-full-post.html">
-                                                    <h2>` + response.items[i].title + `</h2>
-                                                    <span>branding, ui-ux, article</span>
-                                                </a>
-                                            </div> 
-                                            <div class="post-details">                                            
-                                                <p>` + response.items[i].content + `</p>                           
-                                            </div> 
-                                        </div>              
-                                    </div>
-                                </div>`;
-
-                console.log(blogHtml);
-                $('#blog-content').append(blogHtml);
-            }
-
-        }
-    </script>
-    <script src="https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s"></script>
     </body>
 </html>
 
