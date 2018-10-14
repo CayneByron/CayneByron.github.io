@@ -382,7 +382,25 @@
 
             for (var i = 0; i < response.items.length; i++) {
                 console.log(response.items[i]);
+                var blogHtml = `<div class="col s12 m12 l6 blog-post">
+                                    <div class="thumbnail z-depth-1 animated">
+                                        <a href="blog-full-post.html"><img src="assets/images/blog1.jpg" alt="" class="responsive-img"></a>                                       
+                                        <div class="blog-details">
+                                            <div class="post-title" id="blog-post-1">
+                                                <a href="blog-full-post.html">
+                                                    <h2>` + response.items[i].title + `</h2>
+                                                    <span>branding, ui-ux, article</span>
+                                                </a>
+                                            </div> 
+                                            <div class="post-details">                                            
+                                                <p>` + response.items[i].title + `</p>                           
+                                            </div> 
+                                        </div>              
+                                    </div>
+                                </div>`;
 
+                console.log(blogHtml);
+                $('#blog-content').append(blogHtml);
             }
 
         }
