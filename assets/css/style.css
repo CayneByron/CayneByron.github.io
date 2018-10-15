@@ -386,7 +386,7 @@ body {
   width: 100%;
   margin-bottom: -2px;
 }
-.blog-post:nth-child(odd) {
+/*.blog-post:nth-child(odd) {
   padding-left: 0px !important;
 }
 .blog-post:nth-child(even) {
@@ -394,7 +394,7 @@ body {
 }
 .blog-post:last-child {
   padding-right: 0px !important;
-}
+}*/
 #blog-post-1 {
   background-color: #e95855;
 }
