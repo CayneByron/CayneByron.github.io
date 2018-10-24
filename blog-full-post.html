@@ -214,7 +214,7 @@
                         <div class="blog"> <!-- full Blog start -->
                             <div class="col s12 m12 l12 blog-post">
                                 <div class="thumbnail z-depth-1 animated">
-                                    <img src="assets/images/blog.jpg" alt="" class="responsive-img">                                        
+                                    <img id="blog-thumbnail" src="assets/images/blog.jpg" alt="" class="responsive-img">                                        
                                     <div class="blog-details">
                                         <div class="post-title" id="blog-post-1">
                                             <a href="">
@@ -310,7 +310,6 @@
 
         <script>
             function handleResponse(response) {
-                console.log('hello world');
                 response = JSON.parse(response);
                 console.log(response);
                 $('#blog-title').text(response.title);
@@ -323,10 +322,18 @@
                 }
                 $('#blog-labels').text(label);
 
-                response.content = response.content.replace("height=", "");
-                response.content = response.content.replace("width=", "");
-                response.content = response.content.replace("data-original-height", "height");
-                response.content = response.content.replace("data-original-width", "width");
+                var src = 'assets/images/blog1.jpg';
+                var regex = /<img.*?src="(.*?)"/;
+                
+                if (regex.exec(response.items[i].content) != null) {
+                    src = regex.exec(response.items[i].content)[1];
+                }
+                $('#blog-thumbnail').attr('src', src);
+
+                response.content = response.content.replace(/height=/g, "");
+                response.content = response.content.replace(/width=/g, "");
+                response.content = response.content.replace(/data-original-height/g, "height");
+                response.content = response.content.replace(/data-original-width/g, "width");
 
                 $('#blog-content').html(response.content);
             }
