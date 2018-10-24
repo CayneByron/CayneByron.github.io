@@ -325,6 +325,7 @@
         <script>
             function handleResponse(response) {
                 console.log('hello world');
+                response = JSON.parse(response);
                 console.log(response);
             }
 
