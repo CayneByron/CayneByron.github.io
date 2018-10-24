@@ -325,8 +325,8 @@
                 var src = 'assets/images/blog1.jpg';
                 var regex = /<img.*?src="(.*?)"/;
                 
-                if (regex.exec(response.items[i].content) != null) {
-                    src = regex.exec(response.items[i].content)[1];
+                if (regex.exec(response.content) != null) {
+                    src = regex.exec(response.content)[1];
                 }
                 $('#blog-thumbnail').attr('src', src);
 
