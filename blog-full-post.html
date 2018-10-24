@@ -322,6 +322,12 @@
                     label = label.substring(0, label.length-2);
                 }
                 $('#blog-labels').text(label);
+
+                response.content = response.content.replace("height=", "");
+                response.content = response.content.replace("width=", "");
+                response.content = response.content.replace("data-original-height", "height");
+                response.content = response.content.replace("data-original-width", "width");
+
                 $('#blog-content').html(response.content);
             }
 
