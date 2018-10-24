@@ -296,10 +296,10 @@
 
                     var blogHtml = `<div class="col s12 m12 l6 blog-post">
                                         <div class="thumbnail z-depth-1 animated">
-                                            <a href="blog-full-post.html"><img src="` + src + `" alt="" class="responsive-img"></a>
+                                            <a href="blog-full-post.html?blogId=` + response.items[i].id + `"><img src="` + src + `" alt="" class="responsive-img"></a>
                                             <div class="blog-details">
                                                 <div class="post-title `+ colour_class +`" id="blog-post-` + response.items[i].id +  `">
-                                                    <a href="blog-full-post.html">
+                                                    <a href="blog-full-post.html?blogId=` + response.items[i].id + `">
                                                         <h2>` + response.items[i].title + `</h2>
                                                         <span>` + label + `</span>
                                                     </a>

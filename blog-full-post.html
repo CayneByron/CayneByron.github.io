@@ -332,7 +332,10 @@
             let urlParams = new URLSearchParams(window.location.search);
             let blogId = urlParams.get('blogId');
 
-            console.log('blogId: ' + blogId);;
+            console.log('blogId: ' + blogId);
+            if (blogId == null) {
+                return;
+            }
 
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
@@ -341,7 +344,7 @@
                     handleResponse(this.responseText);
                 }
             };
-            xhttp.open("GET", "https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s", true);
+            xhttp.open("GET", "https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts/" + blogId + "?key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s", true);
             xhttp.send();
         </script>
 
