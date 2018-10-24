@@ -233,7 +233,7 @@
                         <!-- =======================================
                              Comments
                         =========================================-->
-                        <div class="col s12 m12 l12 comment right" > <!-- comment start from here -->
+<!--                         <div class="col s12 m12 l12 comment right" > 
                             <div class="row">    
                                 <div class="section-wrapper z-depth-1 wow fadeIn" data-wow-delay="0.1s">
                                     <div class="col s12 m12 l2 comment-img">
@@ -246,8 +246,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>  <!-- comment end from here -->
-                        <div class="col s12 m12 l11 comment right" > <!-- comment start from here -->
+                        </div>  
+                        <div class="col s12 m12 l11 comment right" > 
                             <div class="row">    
                                 <div class="section-wrapper z-depth-1 wow fadeIn" data-wow-delay="0.1s">
                                     <div class="col s12 m12 l2 comment-img">
@@ -260,8 +260,8 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> <!-- comment end here -->
-                        <div class="col s12 m12 l12 z-depth-1 comment-form" > <!-- Write comment from here -->
+                        </div> 
+                        <div class="col s12 m12 l12 z-depth-1 comment-form" > 
                             <div class="row"> 
                                 <div class="input-field col s12 m12 l12 wow fadeIn a2" data-wow-delay="0.1s">
                                     <input id="name" name="name" type="text" class="validate">
@@ -279,7 +279,7 @@
                                     <button class="btn waves-effect waves-light wow fadeIn" type="submit" name="action" data-wow-delay="0.5s">Comment</button>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </section> <!-- full blog end-->
                 
@@ -322,7 +322,7 @@
                     label = label.substring(0, label.length-2);
                 }
                 $('#blog-labels').text(label);
-                $('#blog-content').text(response.content);
+                $('#blog-content').html(response.content);
             }
 
             let urlParams = new URLSearchParams(window.location.search);
