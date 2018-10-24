@@ -325,6 +325,27 @@
         <!-- Customized js -->
         <script src="assets/js/init.js"></script>
 
+        <script>
+            function handleResponse(response) {
+                console.log(response);
+            }
+
+            let urlParams = new URLSearchParams(window.location.search);
+            let blogId = urlParams.get('blogId');
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    // document.getElementById("demo").innerHTML = this.responseText;
+                    handleResponse(this.responseText);
+                }
+            };
+            xhttp.open("GET", "https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s", true);
+            xhttp.send();
+        </script>
+
+        <!-- <script src="https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s"></script> -->
+
     </body>
 </html>
 
