@@ -258,11 +258,11 @@
                     }
                     var src = 'assets/images/blog1.jpg';
                     var regex = /<img.*?src="(.*?)"/;
-                    var label = '';
+                    
                     if (regex.exec(response.items[i].content) != null) {
                         src = regex.exec(response.items[i].content)[1];
                     }
-
+                    var label = '';
                     if (typeof(response.items[i].labels) != "undefined") {
                         for (var j = 0; j < response.items[i].labels.length; j++) {
                             label += response.items[i].labels[j] + ', ';
