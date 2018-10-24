@@ -246,7 +246,7 @@
                 for (var i = response.items.length - 1; i >= 0; --i) {
                     debugger;
                     // response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g, "");
-                    if (response.items[i].preview_content > 500) {
+                    if (response.items[i].preview_content.length > 500) {
                         response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '…';
                     }
                     var src = 'assets/images/blog1.jpg';
