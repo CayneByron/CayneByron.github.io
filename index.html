@@ -241,86 +241,66 @@
         <!-- Customized js -->
         <script src="assets/js/init.js"></script>
 
-        <script>
-            function handleResponse(response) {
-                var postCount = 0;
-                // for (var i = response.items.length - 1; i >= 0; --i) {
-                for (var i = 0; i < response.items.length; i++) {
-                    if (postCount >= 7) {
-                        break;
-                    }
-                    // response.items[i].preview_content = response.items[i].content.replace(/<img[^>]*>/g, "");
-                    response.items[i].preview_content = response.items[i].content.replace(/<[^>]*>/g, "");
-                    response.items[i].preview_content = response.items[i].preview_content.replace(/<\/[^>]*>/g, "");
-
-                    if (response.items[i].preview_content.length > 500) {
-                        response.items[i].preview_content = response.items[i].preview_content.substring(0, 500) + '…';
-                    }
-                    var src = 'assets/images/blog1.jpg';
-                    var regex = /<img.*?src="(.*?)"/;
-                    
-                    if (regex.exec(response.items[i].content) != null) {
-                        src = regex.exec(response.items[i].content)[1];
-                    }
-                    var label = '';
-                    if (typeof(response.items[i].labels) != "undefined") {
-                        for (var j = 0; j < response.items[i].labels.length; j++) {
-                            label += response.items[i].labels[j] + ', ';
-                        }
-                        label = label.substring(0, label.length-2);
-                    }
-
-                    var rand = Math.floor((Math.random() * 10) + 1);
-                    var colour_class = 'green';
-                    if (rand == 2) {
-                        colour_class = 'red';
-                    } else if (rand == 3) {
-                        colour_class = 'grey';
-                    } else if (rand == 4) {
-                        colour_class = 'brown';
-                    } else if (rand == 5) {
-                        colour_class = 'blue';
-                    } else if (rand == 6) {
-                        colour_class = 'green';
-                    } else if (rand == 7) {
-                        colour_class = 'red';
-                    }  else if (rand == 8) {
-                        colour_class = 'grey';
-                    }  else if (rand == 9) {
-                        colour_class = 'brown';
-                    }  else if (rand == 10) {
-                        colour_class = 'blue';
-                    }
-                        
-                    var blogHtml = `<div class="col s12 m12 l6 blog-post">
-                                        <div class="thumbnail z-depth-1 animated">
-                                            <a href="blog-full-post.html?blogId=` + response.items[i].id + `"><img src="` + src + `" alt="" class="responsive-img"></a>
-                                            <div class="blog-details">
-                                                <div class="post-title `+ colour_class +`" id="blog-post-` + response.items[i].id +  `">
-                                                    <a href="blog-full-post.html?blogId=` + response.items[i].id + `">
-                                                        <h2>` + response.items[i].title + `</h2>
-                                                        <span>` + label + `</span>
-                                                    </a>
-                                                </div> 
-                                                <div class="post-details">
-                                                    <p>` + response.items[i].preview_content + `</p>
-                                                </div> 
-                                            </div>              
-                                        </div>
-                                    </div>`;
-                    $('#blog-content').append(blogHtml);
-
-                    postCount++;
-                }
-            }
-        </script>
         <script type="text/javascript">
             $.ajax({
                     type: "GET",
                     url: 'https://uplift-cms.herokuapp.com/blogs',
                     dataType: "JSON",
-                    success: function (data) {
-                        console.log(data);
+                    success: function (blogs) {
+                        console.log(blogs);
+                        blogs.forEach(function(blog) {
+                            console.log(blog.title);
+                            let colour_class = 'green';
+                            const rand = Math.floor((Math.random() * 10) + 1);
+                            switch(rand) {
+                                case 2:
+                                    colour_class = 'red';
+                                    break;
+                                case 3:
+                                    colour_class = 'grey';
+                                    break;
+                                case 4:
+                                    colour_class = 'brown';
+                                    break;
+                                case 5:
+                                    colour_class = 'blue';
+                                    break;
+                                case 6:
+                                    colour_class = 'green';
+                                    break;
+                                case 7:
+                                    colour_class = 'red';
+                                    break;
+                                case 8:
+                                    colour_class = 'grey';
+                                    break;
+                                case 9:
+                                    colour_class = 'brown';
+                                    break;
+                                case 10:
+                                    colour_class = 'blue';
+                                    break;
+                              default:
+                                // code block
+                            }
+                            const blogHtml = `<div class="col s12 m12 l6 blog-post">
+                                                <div class="thumbnail z-depth-1 animated">
+                                                    <a href="blog-full-post.html?blogId=${blog.id}"><img src="${blog.thumbnail.url}" alt="${blog.thumbnail.name}" class="responsive-img"></a>
+                                                    <div class="blog-details">
+                                                        <div class="post-title ${colour_class}" id="blog-post-${blog.id}">
+                                                            <a href="blog-full-post.html?blogId=${blog.id}">
+                                                                <h2>${blog.title}</h2>
+                                                                <span>${blog.tags}</span>
+                                                            </a>
+                                                        </div> 
+                                                        <div class="post-details">
+                                                            <p>${blog.preview}</p>
+                                                        </div> 
+                                                    </div>              
+                                                </div>
+                                            </div>`;
+                            $('#blog-content').append(blogHtml);
+                        });
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
                         console.log(xhr.status);
@@ -328,7 +308,5 @@
                     }
                 });
         </script>
-        <!-- <script src="https://uplift-cms.herokuapp.com/blogs?callback=handleResponse1"></script> -->
-        <!-- <script src="https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s"></script> -->
     </body>
 </html>
