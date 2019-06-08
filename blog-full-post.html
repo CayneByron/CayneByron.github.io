@@ -212,9 +212,9 @@
                 <section class="col s12 m12 l8 section" > 
                     <div class="row">
                         <div class="blog"> <!-- full Blog start -->
-                            <div class="col s12 m12 l12 blog-post">
+                            <div id="blog-post" class="col s12 m12 l12 blog-post" hidden>
                                 <div class="thumbnail z-depth-1 animated">
-                                    <img id="blog-thumbnail" src="assets/images/blog.jpg" alt="" class="responsive-img">                                        
+                                    <img id="blog-image" src="assets/images/blog.jpg" alt="" class="responsive-img">                                        
                                     <div class="blog-details">
                                         <div class="post-title" id="blog-post-1">
                                             <a href="">
@@ -228,58 +228,7 @@
                                     </div>              
                                 </div>
                             </div>
-                        </div> <!-- end  post -->
-                        
-                        <!-- =======================================
-                             Comments
-                        =========================================-->
-<!--                         <div class="col s12 m12 l12 comment right" > 
-                            <div class="row">    
-                                <div class="section-wrapper z-depth-1 wow fadeIn" data-wow-delay="0.1s">
-                                    <div class="col s12 m12 l2 comment-img">
-                                       <img src="assets/images/pp3.jpg" alt="" class="responsive-img"> 
-                                    </div>
-                                    <div class="col col s12 m12 l10 comment-details">
-                                        <h4> Jane Doe </h4>
-                                        <span>Feb 29, 2015</span>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. consectetur adipiscing elit.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>  
-                        <div class="col s12 m12 l11 comment right" > 
-                            <div class="row">    
-                                <div class="section-wrapper z-depth-1 wow fadeIn" data-wow-delay="0.1s">
-                                    <div class="col s12 m12 l2 comment-img">
-                                        <img src="assets/images/pp3.jpg" alt="" class="responsive-img"> 
-                                    </div>
-                                    <div class="col col s12 m12 l10 comment-details">
-                                        <h4> Abdul Bari </h4>
-                                        <span>Feb 29, 2015</span>
-                                        <p>Thank You ! I Love it </p>
-                                    </div>
-                                </div>
-                            </div>
                         </div> 
-                        <div class="col s12 m12 l12 z-depth-1 comment-form" > 
-                            <div class="row"> 
-                                <div class="input-field col s12 m12 l12 wow fadeIn a2" data-wow-delay="0.1s">
-                                    <input id="name" name="name" type="text" class="validate">
-                                    <label for="name">Name</label>
-                                </div>
-                                <div class="input-field col s12 wow fadeIn a4" data-wow-delay="0.3s">
-                                    <input id="email" type="email" name="email" class="validate">
-                                    <label for="email">Email</label>
-                                </div>
-                                <div class="input-field col s12 m12 l12">
-                                    <textarea id="textarea1" class="materialize-textarea"></textarea>
-                                    <label for="textarea1">Write Here</label>
-                                </div>
-                                <div class="input-field col s12 m12 l12">
-                                    <button class="btn waves-effect waves-light wow fadeIn" type="submit" name="action" data-wow-delay="0.5s">Comment</button>
-                                </div>
-                            </div>
-                        </div> -->
                     </div>
                 </section> <!-- full blog end-->
                 
@@ -310,38 +259,17 @@
 
         <script>
             function handleResponse(response) {
-                response = JSON.parse(response);
-                console.log(response);
-                $('#blog-title').text(response.title);
-                var label = '';
-                if (typeof(response.labels) != "undefined") {
-                    for (var j = 0; j < response.labels.length; j++) {
-                        label += response.labels[j] + ', ';
-                    }
-                    label = label.substring(0, label.length-2);
-                }
-                $('#blog-labels').text(label);
-
-                var src = 'assets/images/blog1.jpg';
-                var regex = /<img.*?src="(.*?)"/;
-                
-                if (regex.exec(response.content) != null) {
-                    src = regex.exec(response.content)[1];
-                }
-                $('#blog-thumbnail').attr('src', src);
-
-                response.content = response.content.replace(/height=/g, "");
-                response.content = response.content.replace(/width=/g, "");
-                response.content = response.content.replace(/data-original-height/g, "height");
-                response.content = response.content.replace(/data-original-width/g, "width");
-
-                $('#blog-content').html(response.content);
+                const blog = JSON.parse(response);
+                $('#blog-title').text(blog.title);
+                $('#blog-labels').text(blog.tags);
+                $('#blog-image').attr('src', blog.image.url);
+                $('#blog-content').html(blog.post);
+                $('#blog-post').removeAttr('hidden');
             }
 
             let urlParams = new URLSearchParams(window.location.search);
             let blogId = urlParams.get('blogId');
 
-            console.log('blogId: ' + blogId);
             if (blogId == null) {
                 console.error('No blogId found.');
             }   
@@ -349,15 +277,13 @@
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function() {
                 if (this.readyState == 4 && this.status == 200) {
-                    // document.getElementById("demo").innerHTML = this.responseText;
                     handleResponse(this.responseText);
                 }
             };
-            xhttp.open("GET", "https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts/" + blogId + "?key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s", true);
+            xhttp.open("GET", "https://uplift-cms.herokuapp.com/blogs/" + blogId, true);
             xhttp.send();
         </script>
 
-        <!-- <script src="https://www.googleapis.com/blogger/v3/blogs/6728919269102696100/posts?callback=handleResponse&key=AIzaSyDa6_KRWT1zCLYq6PJxVaiMTEdGloKeP7s"></script> -->
 
     </body>
 </html>
