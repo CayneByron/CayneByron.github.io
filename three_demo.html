@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/zlibjs@0.3.1/bin/inflate.dev.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/102/three.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+    <script src="https://unpkg.com/three@0.102.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://unpkg.com/three@0.102.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://unpkg.com/three@0.102.0/examples/js/loaders/FBXLoader.js"></script>
+</head>
+<body>
+    <script>
+        class BasicCharacterController {
+            constructor() {
+                // this.input = new BasicCharacterControllerInput();
+                // this.stateMachine = new FiniteStateMachine();
+                this.animations = [];
+            }
+
+            async loadModel() {
+                let model = new Promise(function(myResolve, myReject) {
+                    const fbxLoader = new THREE.FBXLoader();
+                    fbxLoader.load('Ch17_nonPBR.fbx', (fbx) => {
+                        fbx.scale.setScalar(0.1);
+                        fbx.traverse(c => {
+                            c.castShadow = true;
+                        })
+                        
+                        // fbx.rotation.y = Math.PI;
+                        myResolve(fbx);
+                    });
+                });
+
+                return model;
+            }
+
+            async loadAnimation() {
+                let animation = new Promise(function(myResolve, myReject) {
+                    const anim = new THREE.FBXLoader();
+                    anim.setPath('game_assets\\animations\\');
+                    anim.load('Jogging.fbx', (anim) => {
+                        myResolve(anim);
+                    });
+                });
+
+                return animation;
+            }
+        }
+
+        var north = false;
+        var west = false;
+        var south = false;
+        var east = false;
+        var northWest = false;
+        var northEast = false;
+        var southWest = false;
+        var southEast = false;
+
+        function setKeyControls(model, animation) {
+            document.addEventListener('keypress', (e) => {
+                if (e.code === "KeyW"){
+                    north = true;
+                } 
+                if (e.code === "KeyA") { 
+                    west = true;
+                } 
+                if (e.code === "KeyS") { 
+                    south = true;
+                } 
+                if (e.code === "KeyD") { 
+                    east = true;
+                }
+                
+            });
+            document.addEventListener('keyup', (e) => {
+                if (e.code === "KeyW"){
+                    north = false;
+                } 
+                if (e.code === "KeyA") { 
+                    west = false;
+                } 
+                if (e.code === "KeyS") { 
+                    south = false;
+                } 
+                if (e.code === "KeyD") { 
+                    east = false;
+                }
+            });
+        }
+
+        (async () => {
+            let scene = new THREE.Scene();
+
+            let camera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 1, 30000);
+            camera.position.set(-100, 200, -900);
+
+            let renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setClearColor('#e5e5e5');
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            let controls = new THREE.OrbitControls(camera, document.body);
+            controls.addEventListener('change', renderer);
+            // controls.minDistance = 500;
+            // controls.maxDistance = 1500;
+
+            let materialArray = [];
+            let texture_ft = new THREE.TextureLoader().load('game_assets\\skybox\\arid_bk.jpg');
+            let texture_bk = new THREE.TextureLoader().load('game_assets\\skybox\\arid_bk.jpg');
+            let texture_up = new THREE.TextureLoader().load('game_assets\\skybox\\arid_up.jpg');
+            let texture_dn = new THREE.TextureLoader().load('game_assets\\skybox\\arid_dn.jpg');
+            let texture_rt = new THREE.TextureLoader().load('game_assets\\skybox\\arid_rt.jpg');
+            let texture_lf = new THREE.TextureLoader().load('game_assets\\skybox\\arid_lf.jpg');
+
+            materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
+            materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
+            materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
+            materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
+            materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
+            materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
+
+            for (let i = 0; i < materialArray.length; i++) {
+                materialArray[i].side = THREE.BackSide;
+            }
+
+            let skyboxGeo = new THREE.BoxGeometry(500, 500, 500);
+            let skybox = new THREE.Mesh(skyboxGeo, materialArray);
+            scene.add(skybox);
+
+            window.addEventListener('resize', () => {
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+            });
+
+            const geometry = new THREE.PlaneGeometry(1000, 100);
+            const material = new THREE.MeshBasicMaterial({color: 0x888888, side: THREE.DoubleSide});
+            const plane = new THREE.Mesh(geometry, material);
+            plane.rotation.x = Math.PI / 2;
+            scene.add(plane);
+
+            // let raycaster = new THREE.Raycaster();
+            // let mouse = new THREE.Vector2();
+
+            let light = new THREE.PointLight(0xFFFFFF, 1, 500);
+            light.position.set(10, 0, -25);
+            scene.add(light);
+
+            // const loader = new THREE.GLTFLoader();
+            // loader.load('Atlas_V_401.glb', (gltf => {
+            //     let rocket = gltf.scene;
+            //     rocket.traverse(c => {
+            //         c.castShadow = true;
+            //     });
+            //     rocket.position.y = 30;
+            //     rocket.rotation.y = Math.PI;
+            //     scene.add(gltf.scene);
+            // }));
+
+            let controller = new BasicCharacterController();
+            
+            let workman = await controller.loadModel();
+            let running = await controller.loadAnimation();
+
+            let mixer = new THREE.AnimationMixer(workman);
+            const idle = mixer.clipAction(running.animations[0]);
+
+            setKeyControls(workman, idle);
+            scene.add(workman);
+            
+            let clock = new THREE.Clock();
+            let render = function() {
+                let delta = clock.getDelta();
+                if (mixer) {
+                    mixer.update(delta);
+                }
+
+                if (north || east || south || west) {
+                    idle.play();
+                } else {
+                    idle.stop();
+                }
+
+                if (north && west) {
+                    workman.position.z += 1.8;
+                    workman.position.x += 1.8;
+                    workman.rotation.y = 1 * Math.PI / 4;
+                } else if (north && east) {
+                    workman.position.z += 1.8;
+                    workman.position.x -= 1.8;
+                    workman.rotation.y = 7 * Math.PI / 4;
+                } else if (south && west) {
+                    workman.position.z -= 1.8;
+                    workman.position.x += 1.8;
+                    workman.rotation.y = 3 * Math.PI / 4;
+                } else if (south && east) {
+                    workman.position.z -= 1.8;
+                    workman.position.x -= 1.8;
+                    workman.rotation.y = 5 * Math.PI / 4;
+                } else if (north) {
+                    workman.position.z += 1.8;
+                    workman.rotation.y = 0 * Math.PI / 4;
+                } else if (west) {
+                    workman.position.x += 1.8;
+                    workman.rotation.y = 2 * Math.PI / 4;
+                } else if (south) {
+                    workman.position.z -= 1.8;
+                    workman.rotation.y = 4 * Math.PI / 4;
+                } else if (east) {
+                    workman.position.x -= 1.8;
+                    workman.rotation.y = 6 * Math.PI / 4;
+                } 
+
+                requestAnimationFrame(render);
+                renderer.render(scene, camera);
+            }
+
+            render();
+        })();
+
+        
+
+    </script>
+</body>
+</html>
+
