@@ -15,23 +15,61 @@
 </head>
 <body>
     <script>
-        class BasicCharacterController {
+        class ModelLoader {
             constructor() {
-                // this.input = new BasicCharacterControllerInput();
-                // this.stateMachine = new FiniteStateMachine();
-                this.animations = [];
-            }
 
-            async loadModel() {
+            }
+            async loadModel(name) {
                 let model = new Promise(function(myResolve, myReject) {
                     const fbxLoader = new THREE.FBXLoader();
-                    fbxLoader.load('Ch17_nonPBR.fbx', (fbx) => {
+                    fbxLoader.setPath('game_assets\\models\\');
+                    fbxLoader.load(name + '.fbx', (fbx) => {
                         fbx.scale.setScalar(0.1);
                         fbx.traverse(c => {
                             c.castShadow = true;
                         })
-                        
-                        // fbx.rotation.y = Math.PI;
+                        myResolve(fbx);
+                    });
+                });
+
+                return model;
+            }
+        }
+
+        class BasicCharacterController {
+            constructor() {
+                
+            }
+
+            async init() {
+                this.model = await this.loadModel('workman');
+                this.animations = [];
+                this.animations['running'] = await this.loadAnimation('Jogging');
+                this.animations['idle'] = await this.loadAnimation('Breathing Idle');
+                this.mixer = new THREE.AnimationMixer(this.model);
+                this.running = this.mixer.clipAction(this.animations['running'].animations[0]);
+                this.idle = this.mixer.clipAction(this.animations['idle'].animations[0]);
+
+                this.north = false;
+                this.west = false;
+                this.south = false;
+                this.east = false;
+                this.northWest = false;
+                this.northEast = false;
+                this.southWest = false;
+                this.southEast = false;
+                this.setKeyControls();
+            };
+
+            async loadModel(name) {
+                let model = new Promise(function(myResolve, myReject) {
+                    const fbxLoader = new THREE.FBXLoader();
+                    fbxLoader.setPath('game_assets\\models\\');
+                    fbxLoader.load(name + '.fbx', (fbx) => {
+                        fbx.scale.setScalar(0.1);
+                        fbx.traverse(c => {
+                            c.castShadow = true;
+                        })
                         myResolve(fbx);
                     });
                 });
@@ -39,83 +77,102 @@
                 return model;
             }
 
-            async loadAnimation() {
+            async loadAnimation(name) {
                 let animation = new Promise(function(myResolve, myReject) {
                     const anim = new THREE.FBXLoader();
                     anim.setPath('game_assets\\animations\\');
-                    anim.load('Jogging.fbx', (anim) => {
+                    anim.load(name + '.fbx', (anim) => {
                         myResolve(anim);
                     });
                 });
 
                 return animation;
             }
+
+            move(x, y, z) {
+                this.model.position.x += x;
+                this.model.position.y += y;
+                this.model.position.z += z;
+            }
+
+            run() {
+                this.running.play();
+                this.idle.stop();
+            }
+
+            halt() {
+                this.idle.play();
+                this.running.stop();
+            }
+
+            setKeyControls() {
+                document.addEventListener('keypress', (e) => {
+                    if (e.code === "KeyW"){
+                        this.north = true;
+                    } 
+                    if (e.code === "KeyA") { 
+                        this.west = true;
+                    } 
+                    if (e.code === "KeyS") { 
+                        this.south = true;
+                    } 
+                    if (e.code === "KeyD") { 
+                        this.east = true;
+                    }
+                });
+                document.addEventListener('keyup', (e) => {
+                    if (e.code === "KeyW"){
+                        this.north = false;
+                    } 
+                    if (e.code === "KeyA") { 
+                        this.west = false;
+                    } 
+                    if (e.code === "KeyS") { 
+                        this.south = false;
+                    } 
+                    if (e.code === "KeyD") { 
+                        this.east = false;
+                    }
+                });
+            }
         }
 
-        var north = false;
-        var west = false;
-        var south = false;
-        var east = false;
-        var northWest = false;
-        var northEast = false;
-        var southWest = false;
-        var southEast = false;
+        class ThirdPersonCamera {
+            constructor(camera, target) {
+                this.camera = camera;
+                this.target = target;
+                this.currentPosition = new THREE.Vector3();
+                this.currentLookAt = new THREE.Vector3();
+            }
 
-        function setKeyControls(model, animation) {
-            document.addEventListener('keypress', (e) => {
-                if (e.code === "KeyW"){
-                    north = true;
-                } 
-                if (e.code === "KeyA") { 
-                    west = true;
-                } 
-                if (e.code === "KeyS") { 
-                    south = true;
-                } 
-                if (e.code === "KeyD") { 
-                    east = true;
-                }
-                
-            });
-            document.addEventListener('keyup', (e) => {
-                if (e.code === "KeyW"){
-                    north = false;
-                } 
-                if (e.code === "KeyA") { 
-                    west = false;
-                } 
-                if (e.code === "KeyS") { 
-                    south = false;
-                } 
-                if (e.code === "KeyD") { 
-                    east = false;
-                }
-            });
+            update(timeElapsed) {
+                this.camera.position.set(this.target.position.x, 35, this.target.position.z - 80);
+            }
         }
 
         (async () => {
             let scene = new THREE.Scene();
 
-            let camera = new THREE.PerspectiveCamera(10, window.innerWidth / window.innerHeight, 1, 30000);
-            camera.position.set(-100, 200, -900);
+            let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(0, 35, -80);
+            camera.rotation.y = Math.PI;
+            camera.rotation.x = Math.PI / 8;
 
             let renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setClearColor('#e5e5e5');
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
-            let controls = new THREE.OrbitControls(camera, document.body);
-            controls.addEventListener('change', renderer);
-            // controls.minDistance = 500;
-            // controls.maxDistance = 1500;
+            // let controls = new THREE.OrbitControls(camera, document.body);
+            // controls.addEventListener('change', renderer);
 
             let materialArray = [];
-            let texture_ft = new THREE.TextureLoader().load('game_assets\\skybox\\arid_bk.jpg');
-            let texture_bk = new THREE.TextureLoader().load('game_assets\\skybox\\arid_bk.jpg');
-            let texture_up = new THREE.TextureLoader().load('game_assets\\skybox\\arid_up.jpg');
-            let texture_dn = new THREE.TextureLoader().load('game_assets\\skybox\\arid_dn.jpg');
-            let texture_rt = new THREE.TextureLoader().load('game_assets\\skybox\\arid_rt.jpg');
-            let texture_lf = new THREE.TextureLoader().load('game_assets\\skybox\\arid_lf.jpg');
+            let texture_ft = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Front.bmp');
+            let texture_bk = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Back.bmp');
+            let texture_up = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_TopR270.bmp');
+            let texture_dn = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Bottom.bmp');
+            let texture_rt = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Left.bmp');
+            let texture_lf = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Right.bmp');
 
             materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
             materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
@@ -128,7 +185,7 @@
                 materialArray[i].side = THREE.BackSide;
             }
 
-            let skyboxGeo = new THREE.BoxGeometry(500, 500, 500);
+            let skyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000);
             let skybox = new THREE.Mesh(skyboxGeo, materialArray);
             scene.add(skybox);
 
@@ -138,18 +195,22 @@
                 camera.updateProjectionMatrix();
             });
 
-            const geometry = new THREE.PlaneGeometry(1000, 100);
-            const material = new THREE.MeshBasicMaterial({color: 0x888888, side: THREE.DoubleSide});
+            const geometry = new THREE.PlaneGeometry(1000, 1000);
+            const ground = new THREE.TextureLoader().load('game_assets\\brown-grunge-texture.jpg');
+            const material = new THREE.MeshBasicMaterial({color: 0x888888, side: THREE.DoubleSide, map: ground});
             const plane = new THREE.Mesh(geometry, material);
             plane.rotation.x = Math.PI / 2;
+
             scene.add(plane);
 
             // let raycaster = new THREE.Raycaster();
             // let mouse = new THREE.Vector2();
 
-            let light = new THREE.PointLight(0xFFFFFF, 1, 500);
-            light.position.set(10, 0, -25);
+            let light = new THREE.PointLight(0xFFFFFF, 1, 1000);
+            light.position.set(0, 100, 0);
             scene.add(light);
+            const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
+            scene.add(ambientLight);
 
             // const loader = new THREE.GLTFLoader();
             // loader.load('Atlas_V_401.glb', (gltf => {
@@ -162,60 +223,61 @@
             //     scene.add(gltf.scene);
             // }));
 
-            let controller = new BasicCharacterController();
-            
-            let workman = await controller.loadModel();
-            let running = await controller.loadAnimation();
+            let modelLoader = new ModelLoader();
+            let cottage = await modelLoader.loadModel('cottage');
+            cottage.position.set(100, 0, 100);
+            scene.add(cottage);
 
-            let mixer = new THREE.AnimationMixer(workman);
-            const idle = mixer.clipAction(running.animations[0]);
+            let workman = new BasicCharacterController();
+            await workman.init();
 
-            setKeyControls(workman, idle);
-            scene.add(workman);
+            scene.add(workman.model);
+
+            let thirdPersonCamera = new ThirdPersonCamera(
+                camera,
+                workman.model
+            );
             
             let clock = new THREE.Clock();
             let render = function() {
                 let delta = clock.getDelta();
-                if (mixer) {
-                    mixer.update(delta);
+                if (workman.mixer) {
+                    workman.mixer.update(delta);
                 }
 
-                if (north || east || south || west) {
-                    idle.play();
+                if (workman.north || workman.east || workman.south || workman.west) {
+                    workman.run();
                 } else {
-                    idle.stop();
+                    workman.halt();
                 }
 
-                if (north && west) {
-                    workman.position.z += 1.8;
-                    workman.position.x += 1.8;
-                    workman.rotation.y = 1 * Math.PI / 4;
-                } else if (north && east) {
-                    workman.position.z += 1.8;
-                    workman.position.x -= 1.8;
-                    workman.rotation.y = 7 * Math.PI / 4;
-                } else if (south && west) {
-                    workman.position.z -= 1.8;
-                    workman.position.x += 1.8;
-                    workman.rotation.y = 3 * Math.PI / 4;
-                } else if (south && east) {
-                    workman.position.z -= 1.8;
-                    workman.position.x -= 1.8;
-                    workman.rotation.y = 5 * Math.PI / 4;
-                } else if (north) {
-                    workman.position.z += 1.8;
-                    workman.rotation.y = 0 * Math.PI / 4;
-                } else if (west) {
-                    workman.position.x += 1.8;
-                    workman.rotation.y = 2 * Math.PI / 4;
-                } else if (south) {
-                    workman.position.z -= 1.8;
-                    workman.rotation.y = 4 * Math.PI / 4;
-                } else if (east) {
-                    workman.position.x -= 1.8;
-                    workman.rotation.y = 6 * Math.PI / 4;
-                } 
+                if (workman.north && workman.west) {
+                    workman.move(1.8, 0, 1.8);
+                    workman.model.rotation.y = 1 * Math.PI / 4;
+                } else if (workman.north && workman.east) {
+                    workman.move(-1.8, 0, 1.8);
+                    workman.model.rotation.y = 7 * Math.PI / 4;
+                } else if (workman.south && workman.west) {
+                    workman.move(1.8, 0, -1.8);
+                    workman.model.rotation.y = 3 * Math.PI / 4;
+                } else if (workman.south && workman.east) {
+                    workman.move(-1.8, 0, -1.8);
+                    workman.model.rotation.y = 5 * Math.PI / 4;
+                } else if (workman.north) {
+                    workman.move(0, 0, 1.8);
+                    workman.model.rotation.y = 0 * Math.PI / 4;
+                } else if (workman.west) {
+                    workman.move(1.8, 0, 0);
+                    workman.model.rotation.y = 2 * Math.PI / 4;
+                } else if (workman.south) {
+                    workman.move(0, 0, -1.8);
+                    workman.model.rotation.y = 4 * Math.PI / 4;
+                } else if (workman.east) {
+                    workman.move(-1.8, 0, 0);
+                    workman.model.rotation.y = 6 * Math.PI / 4;
+                }
 
+                thirdPersonCamera.update(delta);
                 requestAnimationFrame(render);
                 renderer.render(scene, camera);
             }
