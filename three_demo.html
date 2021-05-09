@@ -27,12 +27,30 @@
                         fbx.scale.setScalar(0.1);
                         fbx.traverse(c => {
                             c.castShadow = true;
-                        })
+                        });
                         myResolve(fbx);
                     });
                 });
 
                 return model;
+            }
+
+            detectCollision(player, collidableMeshList) {
+                let hasRun = false;
+                let cottage = collidableMeshList[0];
+                player.traverseVisible(child => {
+                    if (child.isMesh && child.geometry.isBufferGeometry) {
+                        child.geometry.computeBoundingSphere();
+                        cottage.traverseVisible(c_child => {
+                            if (c_child.isMesh && c_child.geometry.isBufferGeometry) {
+                                c_child.geometry.computeBoundingSphere();
+                                if (c_child.geometry.boundingSphere.intersectsSphere(child.geometry.boundingSphere)) {
+                                    // console.log('CRASH!');
+                                }
+                            }
+                        });
+                    }
+                });
             }
         }
 
@@ -237,9 +255,53 @@
                 camera,
                 workman.model
             );
+
+            // cottage.traverseVisible(c_child => {
+            //     if (c_child.isMesh && c_child.geometry.isBufferGeometry) {
+            //         console.log(c_child.geometry);
+            //         // c_child.geometry.computeBoundingSphere();
+            //         // c_child.geometry.computeBoundingBox();
+            //         // let boundingSphere = c_child.geometry.boundingSphere;
+            //         // let boundingBox = c_child.geometry.boundingBox;
+            //         // console.log(boundingSphere);
+            //         // console.log(boundingBox);
+            //         // // if (c_child.geometry.boundingSphere.intersectsSphere(child.geometry.boundingSphere)) {
+            //         // //     // console.log('CRASH!');
+            //         // // }
+            //         // var sphereGeometry = new THREE.SphereGeometry(boundingSphere.radius, 50, 50);
+            //         // var sphereMaterial = new THREE.MeshNormalMaterial();
+            //         // var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            //         // // sphere.position = boundingSphere.center;
+            //         // scene.add(sphere);
+            //     }
+            // });
+
+            // var box = new THREE.Box3().setFromObject( cottage );
+            // console.log( box.min, box.max, box.getSize() );
+
+            // const box1 = new THREE.Box3();
+
+            // const mesh1 = new THREE.Mesh(
+            //     new THREE.SphereGeometry(),
+            //     new THREE.MeshNormalMaterial()
+            // );
+            // scene.add(mesh1);
+            // // ensure the bounding box is computed for its geometry
+            // // this should be done only once (assuming static geometries)
+            // mesh1.geometry.computeBoundingBox();
             
+            const sphere = new THREE.SphereGeometry();
+            const object = new THREE.Mesh( sphere, new THREE.MeshNormalMaterial());
+            const box = new THREE.BoxHelper( cottage, 0xffff00 );
+            scene.add( box );
+            console.log(box)
+
+            modelLoader.detectCollision(workman.model, [cottage]);
             let clock = new THREE.Clock();
             let render = function() {
+                // box1.copy( mesh1.geometry.boundingBox ).applyMatrix4( mesh1.matrixWorld );
+                // console.log(box1);
+
                 let delta = clock.getDelta();
                 if (workman.mixer) {
                     workman.mixer.update(delta);
@@ -251,6 +313,7 @@
                     workman.halt();
                 }
 
+                // modelLoader.detectCollision(workman.model, [cottage]);
                 if (workman.north && workman.west) {
                     workman.move(1.8, 0, 1.8);
                     workman.model.rotation.y = 1 * Math.PI / 4;
