@@ -35,22 +35,34 @@
                 return model;
             }
 
-            detectCollision(player, collidableMeshList) {
-                let hasRun = false;
-                let cottage = collidableMeshList[0];
-                player.traverseVisible(child => {
-                    if (child.isMesh && child.geometry.isBufferGeometry) {
-                        child.geometry.computeBoundingSphere();
-                        cottage.traverseVisible(c_child => {
-                            if (c_child.isMesh && c_child.geometry.isBufferGeometry) {
-                                c_child.geometry.computeBoundingSphere();
-                                if (c_child.geometry.boundingSphere.intersectsSphere(child.geometry.boundingSphere)) {
-                                    // console.log('CRASH!');
-                                }
-                            }
-                        });
+            isCollision(Player, collidableMeshList) {
+                // const box1Helper = new THREE.BoxHelper(player, 0xffff00 );
+                // const box1 = new THREE.Box3().setFromObject(box1Helper);
+
+                // const box2Helper = new THREE.BoxHelper(object, 0xffff00 );
+                // const box2 = new THREE.Box3().setFromObject(box2Helper);
+
+                // // console.log(box1.intersectsBox(box2));
+                // if (box1.intersectsBox(box2)) {
+                //     console.log('CRASH!');
+                // }
+
+                // return box1.intersectsBox(box2);
+                console.log(Player.geometry)
+
+                for (var vertexIndex = 0; vertexIndex < Player.geometry.vertices.length; vertexIndex++) {       
+                    var localVertex = Player.geometry.vertices[vertexIndex].clone();
+                    var globalVertex = Player.matrix.multiplyVector3(localVertex);
+                    var directionVector = globalVertex.sub( Player.position );
+
+                    var ray = new THREE.Raycaster( Player.position, directionVector.clone().normalize() );
+                    var collisionResults = ray.intersectObjects(collidableMeshList);
+                    // console.log(collisionResults);
+                    if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
+                        // a collision occurred... do something...
+                        // console.log('a collision occurred... do something...');
                     }
-                });
+                }
             }
         }
 
@@ -77,6 +89,12 @@
                 this.southWest = false;
                 this.southEast = false;
                 this.setKeyControls();
+                this.collidableObjects = [];
+
+                const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+                const cmaterial = new THREE.MeshNormalMaterial();
+                this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
+                this.cylinder.position.y = this.cylinder.geometry.parameters.height / 2;
             };
 
             async loadModel(name) {
@@ -107,10 +125,56 @@
                 return animation;
             }
 
+            setCollidableObjects(collidableObjects) {
+                this.collidableObjects = collidableObjects;
+            }
+
             move(x, y, z) {
                 this.model.position.x += x;
                 this.model.position.y += y;
                 this.model.position.z += z;
+                this.cylinder.position.x += x;
+                this.cylinder.position.y += y;
+                this.cylinder.position.z += z;
+                if (this.isCollision(this.cylinder)) {
+                    this.model.position.x -= x;
+                    this.model.position.y -= y;
+                    this.model.position.z -= z;
+                    this.cylinder.position.x -= x;
+                    this.cylinder.position.y -= y;
+                    this.cylinder.position.z -= z;
+
+                    this.model.position.x += x;
+                    this.model.position.y += y;
+                    // this.model.position.z += z;
+                    this.cylinder.position.x += x;
+                    this.cylinder.position.y += y;
+                    // this.cylinder.position.z += z;
+                    if (this.isCollision(this.cylinder)) {
+                        this.model.position.x -= x;
+                        this.model.position.y -= y;
+                        // this.model.position.z -= z;
+                        this.cylinder.position.x -= x;
+                        this.cylinder.position.y -= y;
+                        // this.cylinder.position.z -= z;
+
+                        // this.model.position.x += x;
+                        this.model.position.y += y;
+                        this.model.position.z += z;
+                        // this.cylinder.position.x += x;
+                        this.cylinder.position.y += y;
+                        this.cylinder.position.z += z;
+                        if (this.isCollision(this.cylinder)) {
+                            // this.model.position.x -= x;
+                            this.model.position.y -= y;
+                            this.model.position.z -= z;
+                            // this.cylinder.position.x -= x;
+                            this.cylinder.position.y -= y;
+                            this.cylinder.position.z -= z;
+                        }
+                    }
+
+                }
             }
 
             run() {
@@ -121,6 +185,24 @@
             halt() {
                 this.idle.play();
                 this.running.stop();
+            }
+
+            isCollision(player) {
+                for (let i = 0; i < this.collidableObjects.length; i++) {
+                    const box1Helper = new THREE.BoxHelper(player, 0xffff00 );
+                    const box1 = new THREE.Box3().setFromObject(box1Helper);
+
+                    const box2Helper = new THREE.BoxHelper(this.collidableObjects[i], 0xffff00 );
+                    const box2 = new THREE.Box3().setFromObject(box2Helper);
+
+                    // if (box1.intersectsBox(box2)) {
+                    //     console.log('CRASH!');
+                    // }
+
+                    return box1.intersectsBox(box2);
+                }
+
+                return false;
             }
 
             setKeyControls() {
@@ -248,7 +330,8 @@
 
             let workman = new BasicCharacterController();
             await workman.init();
-
+            workman.setCollidableObjects([cottage]);
+            
             scene.add(workman.model);
 
             let thirdPersonCamera = new ThirdPersonCamera(
@@ -256,52 +339,17 @@
                 workman.model
             );
 
-            // cottage.traverseVisible(c_child => {
-            //     if (c_child.isMesh && c_child.geometry.isBufferGeometry) {
-            //         console.log(c_child.geometry);
-            //         // c_child.geometry.computeBoundingSphere();
-            //         // c_child.geometry.computeBoundingBox();
-            //         // let boundingSphere = c_child.geometry.boundingSphere;
-            //         // let boundingBox = c_child.geometry.boundingBox;
-            //         // console.log(boundingSphere);
-            //         // console.log(boundingBox);
-            //         // // if (c_child.geometry.boundingSphere.intersectsSphere(child.geometry.boundingSphere)) {
-            //         // //     // console.log('CRASH!');
-            //         // // }
-            //         // var sphereGeometry = new THREE.SphereGeometry(boundingSphere.radius, 50, 50);
-            //         // var sphereMaterial = new THREE.MeshNormalMaterial();
-            //         // var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-            //         // // sphere.position = boundingSphere.center;
-            //         // scene.add(sphere);
-            //     }
-            // });
+            const boxHelper = new THREE.BoxHelper(cottage, 0xffff00 );
+            scene.add(boxHelper);
 
-            // var box = new THREE.Box3().setFromObject( cottage );
-            // console.log( box.min, box.max, box.getSize() );
-
-            // const box1 = new THREE.Box3();
-
-            // const mesh1 = new THREE.Mesh(
-            //     new THREE.SphereGeometry(),
-            //     new THREE.MeshNormalMaterial()
-            // );
-            // scene.add(mesh1);
-            // // ensure the bounding box is computed for its geometry
-            // // this should be done only once (assuming static geometries)
-            // mesh1.geometry.computeBoundingBox();
+            // const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+            // const cmaterial = new THREE.MeshNormalMaterial();
+            // const cylinder = new THREE.Mesh( cgeometry, cmaterial );
+            // cylinder.position.y = cylinder.geometry.parameters.height / 2;
+            // workman.setCylinder(cylinder);
             
-            const sphere = new THREE.SphereGeometry();
-            const object = new THREE.Mesh( sphere, new THREE.MeshNormalMaterial());
-            const box = new THREE.BoxHelper( cottage, 0xffff00 );
-            scene.add( box );
-            console.log(box)
-
-            modelLoader.detectCollision(workman.model, [cottage]);
             let clock = new THREE.Clock();
             let render = function() {
-                // box1.copy( mesh1.geometry.boundingBox ).applyMatrix4( mesh1.matrixWorld );
-                // console.log(box1);
-
                 let delta = clock.getDelta();
                 if (workman.mixer) {
                     workman.mixer.update(delta);
@@ -313,7 +361,6 @@
                     workman.halt();
                 }
 
-                // modelLoader.detectCollision(workman.model, [cottage]);
                 if (workman.north && workman.west) {
                     workman.move(1.8, 0, 1.8);
                     workman.model.rotation.y = 1 * Math.PI / 4;
@@ -339,8 +386,8 @@
                     workman.move(-1.8, 0, 0);
                     workman.model.rotation.y = 6 * Math.PI / 4;
                 }
-
-                thirdPersonCamera.update(delta);
+                thirdPersonCamera.update();
+                // camera.lookAt(workman.model.position.x, workman.model.position.y, workman.model.position.z);
                 requestAnimationFrame(render);
                 renderer.render(scene, camera);
             }
