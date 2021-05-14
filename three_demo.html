@@ -12,244 +12,14 @@
     <script src="https://unpkg.com/three@0.102.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://unpkg.com/three@0.102.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://unpkg.com/three@0.102.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="classes\ModelLoader.js"></script>
+    <script src="classes\BasicCharacterController.js"></script>
+    <script src="classes\ThirdPersonCamera.js"></script>
+    <script src="classes\Skybox.js"></script>
+    <script src="classes\Ground.js"></script>
 </head>
 <body>
     <script>
-        class ModelLoader {
-            constructor() {
-
-            }
-            async loadModel(name) {
-                let model = new Promise(function(myResolve, myReject) {
-                    const fbxLoader = new THREE.FBXLoader();
-                    fbxLoader.setPath('game_assets\\models\\');
-                    fbxLoader.load(name + '.fbx', (fbx) => {
-                        fbx.scale.setScalar(0.1);
-                        fbx.traverse(c => {
-                            c.castShadow = true;
-                        });
-                        myResolve(fbx);
-                    });
-                });
-
-                return model;
-            }
-
-            isCollision(Player, collidableMeshList) {
-                // const box1Helper = new THREE.BoxHelper(player, 0xffff00 );
-                // const box1 = new THREE.Box3().setFromObject(box1Helper);
-
-                // const box2Helper = new THREE.BoxHelper(object, 0xffff00 );
-                // const box2 = new THREE.Box3().setFromObject(box2Helper);
-
-                // // console.log(box1.intersectsBox(box2));
-                // if (box1.intersectsBox(box2)) {
-                //     console.log('CRASH!');
-                // }
-
-                // return box1.intersectsBox(box2);
-                console.log(Player.geometry)
-
-                for (var vertexIndex = 0; vertexIndex < Player.geometry.vertices.length; vertexIndex++) {       
-                    var localVertex = Player.geometry.vertices[vertexIndex].clone();
-                    var globalVertex = Player.matrix.multiplyVector3(localVertex);
-                    var directionVector = globalVertex.sub( Player.position );
-
-                    var ray = new THREE.Raycaster( Player.position, directionVector.clone().normalize() );
-                    var collisionResults = ray.intersectObjects(collidableMeshList);
-                    // console.log(collisionResults);
-                    if (collisionResults.length > 0 && collisionResults[0].distance < directionVector.length()) {
-                        // a collision occurred... do something...
-                        // console.log('a collision occurred... do something...');
-                    }
-                }
-            }
-        }
-
-        class BasicCharacterController {
-            constructor() {
-                
-            }
-
-            async init() {
-                this.model = await this.loadModel('workman');
-                this.animations = [];
-                this.animations['running'] = await this.loadAnimation('Jogging');
-                this.animations['idle'] = await this.loadAnimation('Breathing Idle');
-                this.mixer = new THREE.AnimationMixer(this.model);
-                this.running = this.mixer.clipAction(this.animations['running'].animations[0]);
-                this.idle = this.mixer.clipAction(this.animations['idle'].animations[0]);
-
-                this.north = false;
-                this.west = false;
-                this.south = false;
-                this.east = false;
-                this.northWest = false;
-                this.northEast = false;
-                this.southWest = false;
-                this.southEast = false;
-                this.setKeyControls();
-                this.collidableObjects = [];
-
-                const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
-                const cmaterial = new THREE.MeshNormalMaterial();
-                this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
-                this.cylinder.position.y = this.cylinder.geometry.parameters.height / 2;
-            };
-
-            async loadModel(name) {
-                let model = new Promise(function(myResolve, myReject) {
-                    const fbxLoader = new THREE.FBXLoader();
-                    fbxLoader.setPath('game_assets\\models\\');
-                    fbxLoader.load(name + '.fbx', (fbx) => {
-                        fbx.scale.setScalar(0.1);
-                        fbx.traverse(c => {
-                            c.castShadow = true;
-                        })
-                        myResolve(fbx);
-                    });
-                });
-
-                return model;
-            }
-
-            async loadAnimation(name) {
-                let animation = new Promise(function(myResolve, myReject) {
-                    const anim = new THREE.FBXLoader();
-                    anim.setPath('game_assets\\animations\\');
-                    anim.load(name + '.fbx', (anim) => {
-                        myResolve(anim);
-                    });
-                });
-
-                return animation;
-            }
-
-            setCollidableObjects(collidableObjects) {
-                this.collidableObjects = collidableObjects;
-            }
-
-            move(x, y, z) {
-                this.model.position.x += x;
-                this.model.position.y += y;
-                this.model.position.z += z;
-                this.cylinder.position.x += x;
-                this.cylinder.position.y += y;
-                this.cylinder.position.z += z;
-                if (this.isCollision(this.cylinder)) {
-                    this.model.position.x -= x;
-                    this.model.position.y -= y;
-                    this.model.position.z -= z;
-                    this.cylinder.position.x -= x;
-                    this.cylinder.position.y -= y;
-                    this.cylinder.position.z -= z;
-
-                    this.model.position.x += x;
-                    this.model.position.y += y;
-                    // this.model.position.z += z;
-                    this.cylinder.position.x += x;
-                    this.cylinder.position.y += y;
-                    // this.cylinder.position.z += z;
-                    if (this.isCollision(this.cylinder)) {
-                        this.model.position.x -= x;
-                        this.model.position.y -= y;
-                        // this.model.position.z -= z;
-                        this.cylinder.position.x -= x;
-                        this.cylinder.position.y -= y;
-                        // this.cylinder.position.z -= z;
-
-                        // this.model.position.x += x;
-                        this.model.position.y += y;
-                        this.model.position.z += z;
-                        // this.cylinder.position.x += x;
-                        this.cylinder.position.y += y;
-                        this.cylinder.position.z += z;
-                        if (this.isCollision(this.cylinder)) {
-                            // this.model.position.x -= x;
-                            this.model.position.y -= y;
-                            this.model.position.z -= z;
-                            // this.cylinder.position.x -= x;
-                            this.cylinder.position.y -= y;
-                            this.cylinder.position.z -= z;
-                        }
-                    }
-
-                }
-            }
-
-            run() {
-                this.running.play();
-                this.idle.stop();
-            }
-
-            halt() {
-                this.idle.play();
-                this.running.stop();
-            }
-
-            isCollision(player) {
-                for (let i = 0; i < this.collidableObjects.length; i++) {
-                    const box1Helper = new THREE.BoxHelper(player, 0xffff00 );
-                    const box1 = new THREE.Box3().setFromObject(box1Helper);
-
-                    const box2Helper = new THREE.BoxHelper(this.collidableObjects[i], 0xffff00 );
-                    const box2 = new THREE.Box3().setFromObject(box2Helper);
-
-                    // if (box1.intersectsBox(box2)) {
-                    //     console.log('CRASH!');
-                    // }
-
-                    return box1.intersectsBox(box2);
-                }
-
-                return false;
-            }
-
-            setKeyControls() {
-                document.addEventListener('keypress', (e) => {
-                    if (e.code === "KeyW"){
-                        this.north = true;
-                    } 
-                    if (e.code === "KeyA") { 
-                        this.west = true;
-                    } 
-                    if (e.code === "KeyS") { 
-                        this.south = true;
-                    } 
-                    if (e.code === "KeyD") { 
-                        this.east = true;
-                    }
-                });
-                document.addEventListener('keyup', (e) => {
-                    if (e.code === "KeyW"){
-                        this.north = false;
-                    } 
-                    if (e.code === "KeyA") { 
-                        this.west = false;
-                    } 
-                    if (e.code === "KeyS") { 
-                        this.south = false;
-                    } 
-                    if (e.code === "KeyD") { 
-                        this.east = false;
-                    }
-                });
-            }
-        }
-
-        class ThirdPersonCamera {
-            constructor(camera, target) {
-                this.camera = camera;
-                this.target = target;
-                this.currentPosition = new THREE.Vector3();
-                this.currentLookAt = new THREE.Vector3();
-            }
-
-            update(timeElapsed) {
-                this.camera.position.set(this.target.position.x, 35, this.target.position.z - 80);
-            }
-        }
-
         (async () => {
             let scene = new THREE.Scene();
 
@@ -266,28 +36,8 @@
             // let controls = new THREE.OrbitControls(camera, document.body);
             // controls.addEventListener('change', renderer);
 
-            let materialArray = [];
-            let texture_ft = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Front.bmp');
-            let texture_bk = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Back.bmp');
-            let texture_up = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_TopR270.bmp');
-            let texture_dn = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Bottom.bmp');
-            let texture_rt = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Left.bmp');
-            let texture_lf = new THREE.TextureLoader().load('game_assets\\skybox\\Daylight Box_Pieces\\Daylight Box_Right.bmp');
-
-            materialArray.push(new THREE.MeshBasicMaterial({map: texture_ft}));
-            materialArray.push(new THREE.MeshBasicMaterial({map: texture_bk}));
-            materialArray.push(new THREE.MeshBasicMaterial({map: texture_up}));
-            materialArray.push(new THREE.MeshBasicMaterial({map: texture_dn}));
-            materialArray.push(new THREE.MeshBasicMaterial({map: texture_rt}));
-            materialArray.push(new THREE.MeshBasicMaterial({map: texture_lf}));
-
-            for (let i = 0; i < materialArray.length; i++) {
-                materialArray[i].side = THREE.BackSide;
-            }
-
-            let skyboxGeo = new THREE.BoxGeometry(1000, 1000, 1000);
-            let skybox = new THREE.Mesh(skyboxGeo, materialArray);
-            scene.add(skybox);
+            let skybox = new Skybox();
+            scene.add(skybox.mesh);
 
             window.addEventListener('resize', () => {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -295,38 +45,22 @@
                 camera.updateProjectionMatrix();
             });
 
-            const geometry = new THREE.PlaneGeometry(1000, 1000);
-            const ground = new THREE.TextureLoader().load('game_assets\\brown-grunge-texture.jpg');
-            const material = new THREE.MeshBasicMaterial({color: 0x888888, side: THREE.DoubleSide, map: ground});
-            const plane = new THREE.Mesh(geometry, material);
-            plane.rotation.x = Math.PI / 2;
-
-            scene.add(plane);
-
-            // let raycaster = new THREE.Raycaster();
-            // let mouse = new THREE.Vector2();
+            let ground = new Ground();
+            scene.add(ground.mesh);
 
             let light = new THREE.PointLight(0xFFFFFF, 1, 1000);
             light.position.set(0, 100, 0);
             scene.add(light);
-            const ambientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
+            const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
             scene.add(ambientLight);
-
-            // const loader = new THREE.GLTFLoader();
-            // loader.load('Atlas_V_401.glb', (gltf => {
-            //     let rocket = gltf.scene;
-            //     rocket.traverse(c => {
-            //         c.castShadow = true;
-            //     });
-            //     rocket.position.y = 30;
-            //     rocket.rotation.y = Math.PI;
-            //     scene.add(gltf.scene);
-            // }));
 
             let modelLoader = new ModelLoader();
             let cottage = await modelLoader.loadModel('cottage');
-            cottage.position.set(100, 0, 100);
+            cottage.position.set(0, 0, 100);
+            cottage.rotation.y = 0;
             scene.add(cottage);
+            // const boxHelper = new THREE.BoxHelper(cottage, 0xffff00 );
+            // scene.add(boxHelper);
 
             let workman = new BasicCharacterController();
             await workman.init();
@@ -339,15 +73,13 @@
                 workman.model
             );
 
-            const boxHelper = new THREE.BoxHelper(cottage, 0xffff00 );
-            scene.add(boxHelper);
-
-            // const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
-            // const cmaterial = new THREE.MeshNormalMaterial();
-            // const cylinder = new THREE.Mesh( cgeometry, cmaterial );
-            // cylinder.position.y = cylinder.geometry.parameters.height / 2;
-            // workman.setCylinder(cylinder);
-            
+            const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+            const cmaterial = new THREE.MeshNormalMaterial();
+            this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
+            this.cylinder.position.y = 1;
+            // this.cylinder.position.y = this.cylinder.geometry.parameters.height / 2;
+            // scene.add(cylinder)
+            let arrow = null;
             let clock = new THREE.Clock();
             let render = function() {
                 let delta = clock.getDelta();
@@ -386,9 +118,14 @@
                     workman.move(-1.8, 0, 0);
                     workman.model.rotation.y = 6 * Math.PI / 4;
                 }
+                cylinder.position.x = workman.model.position.x;
+                cylinder.position.z = workman.model.position.z;
                 thirdPersonCamera.update();
                 // camera.lookAt(workman.model.position.x, workman.model.position.y, workman.model.position.z);
-                requestAnimationFrame(render);
+                
+                setTimeout( function() {
+                    requestAnimationFrame(render);
+                }, 1000 / 60 );
                 renderer.render(scene, camera);
             }
 
