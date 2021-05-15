@@ -44,16 +44,16 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
             });
-
             let ground = new Ground();
+            await ground.init(null);
             scene.add(ground.mesh);
-
+            
             let light = new THREE.PointLight(0xFFFFFF, 1, 1000);
             light.position.set(0, 100, 0);
             scene.add(light);
             const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
             scene.add(ambientLight);
-
+            
             let modelLoader = new ModelLoader();
             let cottage = await modelLoader.loadModel('cottage');
             cottage.position.set(0, 0, 100);
@@ -73,12 +73,13 @@
                 workman.model
             );
 
-            const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
+            const cgeometry = new THREE.CylinderGeometry(5, 5, 20, 32);
             const cmaterial = new THREE.MeshNormalMaterial();
             this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
-            this.cylinder.position.y = 1;
+            this.cylinder.position.y = 100;
             // this.cylinder.position.y = this.cylinder.geometry.parameters.height / 2;
             // scene.add(cylinder)
+            const down = new THREE.Vector3(0.0, -1.0, 0.0);
             let arrow = null;
             let clock = new THREE.Clock();
             let render = function() {
@@ -91,6 +92,16 @@
                     workman.run();
                 } else {
                     workman.halt();
+                }
+
+                
+                let ray = new THREE.Raycaster(cylinder.position, down.normalize(), 0, 200);
+                // let arrowHelper = new THREE.ArrowHelper(direction.normalize(), cylinder.position, 50, 0xff0000);
+                const intersects = ray.intersectObject(ground.mesh, true);
+                // console.log(intersects);a
+                // scene.add(arrowHelper);
+                if (intersects.length > 0) {
+                    workman.model.position.y = intersects[0].point.y;
                 }
 
                 if (workman.north && workman.west) {
@@ -112,6 +123,8 @@
                     workman.move(1.8, 0, 0);
                     workman.model.rotation.y = 2 * Math.PI / 4;
                 } else if (workman.south) {
+                    
+
                     workman.move(0, 0, -1.8);
                     workman.model.rotation.y = 4 * Math.PI / 4;
                 } else if (workman.east) {
