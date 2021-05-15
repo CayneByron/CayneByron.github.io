@@ -28,6 +28,7 @@ class BasicCharacterController {
         this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
         // this.cylinder.position.y = this.cylinder.geometry.parameters.height / 2;
         this.cylinder.position.y = 1;
+        this.arrows = [];
     };
 
     async loadModel(name) {
@@ -69,7 +70,7 @@ class BasicCharacterController {
         this.cylinder.position.x += x;
         this.cylinder.position.y += y;
         this.cylinder.position.z += z;
-        if (this.isCollision(this.cylinder)) {
+        if (this.isCollision(this.cylinder, new THREE.Vector3(x, y, z))) {
             this.model.position.x -= x;
             this.model.position.y -= y;
             this.model.position.z -= z;
@@ -81,7 +82,7 @@ class BasicCharacterController {
             this.model.position.y += y;
             this.cylinder.position.x += x;
             this.cylinder.position.y += y;
-            if (this.isCollision(this.cylinder)) {
+            if (this.isCollision(this.cylinder, new THREE.Vector3(x, y, 0.0))) {
                 this.model.position.x -= x;
                 this.model.position.y -= y;
                 this.cylinder.position.x -= x;
@@ -91,7 +92,7 @@ class BasicCharacterController {
                 this.model.position.z += z;
                 this.cylinder.position.y += y;
                 this.cylinder.position.z += z;
-                if (this.isCollision(this.cylinder)) {
+                if (this.isCollision(this.cylinder, new THREE.Vector3(0.0, y, z))) {
                     this.model.position.y -= y;
                     this.model.position.z -= z;
                     this.cylinder.position.y -= y;
@@ -111,26 +112,13 @@ class BasicCharacterController {
         this.running.stop();
     }
 
-    isCollision(player) {
-        for (let j = 0; j < this.collidableObjects.length; j++) {
-            let directions = [];
-            directions.push(new THREE.Vector3(0.0, 0.0, 1.0));
-            directions.push(new THREE.Vector3(1.0, 0.0, 0.0));
-            directions.push(new THREE.Vector3(0.0, 0.0, -1.0));
-            directions.push(new THREE.Vector3(-1.0, 0.0, 0.0));
-            directions.push(new THREE.Vector3(-1.0, 0.0, -1.0));
-            directions.push(new THREE.Vector3(1.0, 0.0, 1.0));
-            directions.push(new THREE.Vector3(-1.0, 0.0, 1.0));
-            directions.push(new THREE.Vector3(1.0, 0.0, -1.0));
+    isCollision(player, direction) {
+        let ray = new THREE.Raycaster(player.position, direction.normalize(), 0, 5);
+        const intersects = ray.intersectObjects(this.collidableObjects, true);
+        if (intersects.length > 0) {
+            this.arrows.push(new THREE.ArrowHelper(direction, player.position, 5, 0xffff00));
 
-            for (let i = 0; i < directions.length; i++) {
-                let direction = directions[i];
-                let ray = new THREE.Raycaster(player.position, direction.normalize(), 0, 5);
-                const intersects = ray.intersectObjects(this.collidableObjects, true);
-                if (intersects.length > 0) {
-                    return true;
-                }
-            }
+            return true;
         }
 
         return false;

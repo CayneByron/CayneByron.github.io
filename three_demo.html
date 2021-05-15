@@ -120,6 +120,10 @@
                 }
                 cylinder.position.x = workman.model.position.x;
                 cylinder.position.z = workman.model.position.z;
+                for (let i = 0; i < workman.arrows.length; i++) {
+                    scene.add(workman.arrows[i]);
+                }
+                workman.arrows = [];
                 thirdPersonCamera.update();
                 // camera.lookAt(workman.model.position.x, workman.model.position.y, workman.model.position.z);
                 
