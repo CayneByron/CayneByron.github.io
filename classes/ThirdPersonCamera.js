@@ -7,6 +7,6 @@ class ThirdPersonCamera {
     }
 
     update(timeElapsed) {
-        this.camera.position.set(this.target.position.x, 35, this.target.position.z - 80);
+        this.camera.position.set(this.target.position.x, this.target.position.y + 35, this.target.position.z - 80);
     }
 }

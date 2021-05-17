@@ -22,6 +22,8 @@ class BasicCharacterController {
         this.southEast = false;
         this.setKeyControls();
         this.collidableObjects = [];
+        this.clockwise = false;
+        this.counterClockwise = false;
 
         const cgeometry = new THREE.CylinderGeometry( 5, 5, 20, 32 );
         const cmaterial = new THREE.MeshNormalMaterial();
@@ -70,6 +72,7 @@ class BasicCharacterController {
         this.cylinder.position.x += x;
         this.cylinder.position.y += y;
         this.cylinder.position.z += z;
+
         if (this.isCollision(this.cylinder, new THREE.Vector3(x, y, z))) {
             this.model.position.x -= x;
             this.model.position.y -= y;
@@ -114,12 +117,27 @@ class BasicCharacterController {
 
     isCollision(player, direction) {
         let ray = new THREE.Raycaster(player.position, direction.normalize(), 0, 5);
-        const intersects = ray.intersectObjects(this.collidableObjects, true);
+        let intersects = ray.intersectObjects(this.collidableObjects, true);
         if (intersects.length > 0) {
             this.arrows.push(new THREE.ArrowHelper(direction, player.position, 5, 0xffff00));
-
             return true;
         }
+        player.position.y += 5;
+        ray = new THREE.Raycaster(player.position, direction.normalize(), 0, 5);
+        intersects = ray.intersectObjects(this.collidableObjects, true);
+        if (intersects.length > 0) {
+            this.arrows.push(new THREE.ArrowHelper(direction, player.position, 5, 0xffff00));
+            return true;
+        }
+
+        player.position.y += 5;
+        ray = new THREE.Raycaster(player.position, direction.normalize(), 0, 5);
+        intersects = ray.intersectObjects(this.collidableObjects, true);
+        if (intersects.length > 0) {
+            this.arrows.push(new THREE.ArrowHelper(direction, player.position, 5, 0xffff00));
+            return true;
+        }
+        player.position.y -= 10;
 
         return false;
     }
@@ -138,6 +156,12 @@ class BasicCharacterController {
             if (e.code === "KeyD") { 
                 this.east = true;
             }
+            if (e.code === "KeyQ") { 
+                this.clockwise = true;
+            }
+            if (e.code === "KeyE") { 
+                this.counterClockwise = true;
+            }
         });
         document.addEventListener('keyup', (e) => {
             if (e.code === "KeyW"){
@@ -151,6 +175,12 @@ class BasicCharacterController {
             } 
             if (e.code === "KeyD") { 
                 this.east = false;
+            }
+            if (e.code === "KeyQ") { 
+                this.clockwise = false;
+            }
+            if (e.code === "KeyE") { 
+                this.counterClockwise = false;
             }
         });
     }

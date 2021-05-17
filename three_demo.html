@@ -23,7 +23,7 @@
         (async () => {
             let scene = new THREE.Scene();
 
-            let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1500);
             camera.position.set(0, 35, -80);
             camera.rotation.y = Math.PI;
             camera.rotation.x = Math.PI / 8;
@@ -32,6 +32,7 @@
             renderer.setClearColor('#e5e5e5');
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
+
 
             // let controls = new THREE.OrbitControls(camera, document.body);
             // controls.addEventListener('change', renderer);
@@ -56,11 +57,9 @@
             
             let modelLoader = new ModelLoader();
             let cottage = await modelLoader.loadModel('cottage');
-            cottage.position.set(0, 0, 100);
-            cottage.rotation.y = 0;
+            cottage.position.set(0, 20, 180);
+            cottage.rotation.y = Math.PI / 1;
             scene.add(cottage);
-            // const boxHelper = new THREE.BoxHelper(cottage, 0xffff00 );
-            // scene.add(boxHelper);
 
             let workman = new BasicCharacterController();
             await workman.init();
@@ -77,8 +76,6 @@
             const cmaterial = new THREE.MeshNormalMaterial();
             this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
             this.cylinder.position.y = 100;
-            // this.cylinder.position.y = this.cylinder.geometry.parameters.height / 2;
-            // scene.add(cylinder)
             const down = new THREE.Vector3(0.0, -1.0, 0.0);
             let arrow = null;
             let clock = new THREE.Clock();
@@ -93,46 +90,49 @@
                 } else {
                     workman.halt();
                 }
-
                 
                 let ray = new THREE.Raycaster(cylinder.position, down.normalize(), 0, 200);
-                // let arrowHelper = new THREE.ArrowHelper(direction.normalize(), cylinder.position, 50, 0xff0000);
                 const intersects = ray.intersectObject(ground.mesh, true);
-                // console.log(intersects);a
-                // scene.add(arrowHelper);
                 if (intersects.length > 0) {
                     workman.model.position.y = intersects[0].point.y;
+                    workman.cylinder.position.y = intersects[0].point.y;
                 }
-
+                
                 if (workman.north && workman.west) {
-                    workman.move(1.8, 0, 1.8);
+                    workman.move(1.9, 0, 1.9);
                     workman.model.rotation.y = 1 * Math.PI / 4;
                 } else if (workman.north && workman.east) {
-                    workman.move(-1.8, 0, 1.8);
+                    workman.move(-1.9, 0, 1.9);
                     workman.model.rotation.y = 7 * Math.PI / 4;
                 } else if (workman.south && workman.west) {
-                    workman.move(1.8, 0, -1.8);
+                    workman.move(1.9, 0, -1.9);
                     workman.model.rotation.y = 3 * Math.PI / 4;
                 } else if (workman.south && workman.east) {
-                    workman.move(-1.8, 0, -1.8);
+                    workman.move(-1.9, 0, -1.9);
                     workman.model.rotation.y = 5 * Math.PI / 4;
                 } else if (workman.north) {
-                    workman.move(0, 0, 1.8);
+                    workman.move(0, 0, 1.9);
                     workman.model.rotation.y = 0 * Math.PI / 4;
                 } else if (workman.west) {
-                    workman.move(1.8, 0, 0);
+                    workman.move(1.9, 0, 0);
                     workman.model.rotation.y = 2 * Math.PI / 4;
                 } else if (workman.south) {
-                    
-
-                    workman.move(0, 0, -1.8);
+                    workman.move(0, 0, -1.9);
                     workman.model.rotation.y = 4 * Math.PI / 4;
                 } else if (workman.east) {
-                    workman.move(-1.8, 0, 0);
+                    workman.move(-1.9, 0, 0);
                     workman.model.rotation.y = 6 * Math.PI / 4;
                 }
+
+                if (workman.clockwise) {
+                    workman.model.rotation.y += 0.1;
+                } else if (workman.counterClockwise) {
+                    workman.model.rotation.y -= 0.1;
+                }
+
                 cylinder.position.x = workman.model.position.x;
                 cylinder.position.z = workman.model.position.z;
+                
                 for (let i = 0; i < workman.arrows.length; i++) {
                     scene.add(workman.arrows[i]);
                 }
