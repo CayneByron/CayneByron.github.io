@@ -6,7 +6,7 @@ class ThirdPersonCamera {
         this.currentLookAt = new THREE.Vector3();
     }
 
-    update(timeElapsed) {
-        this.camera.position.set(this.target.position.x, this.target.position.y + 35, this.target.position.z - 80);
+    update(cameraHeight, cameraDepth) {
+        this.camera.position.set(this.target.position.x, this.target.position.y + cameraHeight, this.target.position.z + cameraDepth);
     }
 }

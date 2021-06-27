@@ -12,19 +12,24 @@
     <script src="https://unpkg.com/three@0.102.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://unpkg.com/three@0.102.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://unpkg.com/three@0.102.0/examples/js/loaders/FBXLoader.js"></script>
+    <!-- <script src="https://unpkg.com/three@0.102.0/src/math/Math.js" type="module"></script> -->
+    <!-- <script src="https://unpkg.com/three@0.128.0/src/extras/PMREMGenerator.js" type="module"></script> -->
     <script src="classes\ModelLoader.js"></script>
     <script src="classes\BasicCharacterController.js"></script>
     <script src="classes\ThirdPersonCamera.js"></script>
     <script src="classes\Skybox.js"></script>
     <script src="classes\Ground.js"></script>
+    <script src="classes\Water.js"></script>
 </head>
 <body>
     <script>
         (async () => {
+            let sun = new THREE.Vector3();
             let scene = new THREE.Scene();
-
-            let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1500);
-            camera.position.set(0, 35, -80);
+            let cameraHeight = 400;
+            let cameraDepth = -120;
+            let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+            camera.position.set(0, cameraHeight, cameraDepth);
             camera.rotation.y = Math.PI;
             camera.rotation.x = Math.PI / 8;
 
@@ -34,11 +39,19 @@
             document.body.appendChild(renderer.domElement);
 
 
-            // let controls = new THREE.OrbitControls(camera, document.body);
-            // controls.addEventListener('change', renderer);
+            let controls = new THREE.OrbitControls(camera, document.body);
+            controls.addEventListener('change', renderer);
 
             let skybox = new Skybox();
+            skybox.mesh.scale.setScalar(10000);
             scene.add(skybox.mesh);
+
+            const skyUniforms = skybox.mesh.material.uniforms;
+
+            skyUniforms[ 'turbidity' ].value = 10;
+            skyUniforms[ 'rayleigh' ].value = 2;
+            skyUniforms[ 'mieCoefficient' ].value = 0.005;
+            skyUniforms[ 'mieDirectionalG' ].value = 0.8;
 
             window.addEventListener('resize', () => {
                 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -48,16 +61,24 @@
             let ground = new Ground();
             await ground.init(null);
             scene.add(ground.mesh);
+
+            let water = new Water();
+            await water.init(null);
+            scene.add(water.mesh);
+            water.mesh.position.y = 45;
+            water.mesh.position.x = 250;
             
-            let light = new THREE.PointLight(0xFFFFFF, 1, 1000);
-            light.position.set(0, 100, 0);
-            scene.add(light);
-            const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+            // let light = new THREE.PointLight(0x888888, 1, 1000);
+            // light.position.set(0, 100, -100);
+            // scene.add(light);
+            const ambientLight = new THREE.AmbientLight(0xFFFFFF); // soft white light
             scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            scene.add( directionalLight );
             
             let modelLoader = new ModelLoader();
             let cottage = await modelLoader.loadModel('cottage');
-            cottage.position.set(0, 20, 180);
+            cottage.position.set(0, 40, 180);
             cottage.rotation.y = Math.PI / 1;
             scene.add(cottage);
 
@@ -75,11 +96,30 @@
             const cgeometry = new THREE.CylinderGeometry(5, 5, 20, 32);
             const cmaterial = new THREE.MeshNormalMaterial();
             this.cylinder = new THREE.Mesh( cgeometry, cmaterial );
-            this.cylinder.position.y = 100;
+            this.cylinder.position.y = 1000;
             const down = new THREE.Vector3(0.0, -1.0, 0.0);
             let arrow = null;
             let clock = new THREE.Clock();
+            const parameters = {
+                elevation: 2,
+                azimuth: 180
+            };
+            // const pmremGenerator = new THREE.PMREMGenerator( renderer );
+
             let render = function() {
+                //update sun
+                const phi = THREE.Math.degToRad( 90 - parameters.elevation );
+                const theta = THREE.Math.degToRad( parameters.azimuth );
+
+                sun.setFromSphericalCoords( 1, phi, theta );
+
+                skybox.mesh.material.uniforms[ 'sunPosition' ].value.copy( sun );
+                // water.material.uniforms[ 'sunDirection' ].value.copy( sun ).normalize();
+
+                // scene.environment = pmremGenerator.fromScene( skybox.mesh ).texture;
+                //end update sun
+                // water.mesh.position.y = workman.model.position.y;
+                // console.log(workman.model.position.y);
                 let delta = clock.getDelta();
                 if (workman.mixer) {
                     workman.mixer.update(delta);
@@ -91,7 +131,7 @@
                     workman.halt();
                 }
                 
-                let ray = new THREE.Raycaster(cylinder.position, down.normalize(), 0, 200);
+                let ray = new THREE.Raycaster(cylinder.position, down.normalize(), 0, 2000);
                 const intersects = ray.intersectObject(ground.mesh, true);
                 if (intersects.length > 0) {
                     workman.model.position.y = intersects[0].point.y;
@@ -99,28 +139,28 @@
                 }
                 
                 if (workman.north && workman.west) {
-                    workman.move(1.9, 0, 1.9);
+                    workman.move(5.4, 0, 5.4);
                     workman.model.rotation.y = 1 * Math.PI / 4;
                 } else if (workman.north && workman.east) {
-                    workman.move(-1.9, 0, 1.9);
+                    workman.move(-5.4, 0, 5.4);
                     workman.model.rotation.y = 7 * Math.PI / 4;
                 } else if (workman.south && workman.west) {
-                    workman.move(1.9, 0, -1.9);
+                    workman.move(5.4, 0, -5.4);
                     workman.model.rotation.y = 3 * Math.PI / 4;
                 } else if (workman.south && workman.east) {
-                    workman.move(-1.9, 0, -1.9);
+                    workman.move(-5.4, 0, -5.4);
                     workman.model.rotation.y = 5 * Math.PI / 4;
                 } else if (workman.north) {
-                    workman.move(0, 0, 1.9);
+                    workman.move(0, 0, 5.4);
                     workman.model.rotation.y = 0 * Math.PI / 4;
                 } else if (workman.west) {
-                    workman.move(1.9, 0, 0);
+                    workman.move(5.4, 0, 0);
                     workman.model.rotation.y = 2 * Math.PI / 4;
                 } else if (workman.south) {
-                    workman.move(0, 0, -1.9);
+                    workman.move(0, 0, -5.4);
                     workman.model.rotation.y = 4 * Math.PI / 4;
                 } else if (workman.east) {
-                    workman.move(-1.9, 0, 0);
+                    workman.move(-5.4, 0, 0);
                     workman.model.rotation.y = 6 * Math.PI / 4;
                 }
 
@@ -137,7 +177,7 @@
                     scene.add(workman.arrows[i]);
                 }
                 workman.arrows = [];
-                thirdPersonCamera.update();
+                // thirdPersonCamera.update(cameraHeight, cameraDepth);
                 // camera.lookAt(workman.model.position.x, workman.model.position.y, workman.model.position.z);
                 
                 setTimeout( function() {
