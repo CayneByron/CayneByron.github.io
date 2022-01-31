@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet L.Polyline.fromEncoded()</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-rc.1/leaflet.js"></script>
+    <style>
+        /* #map { width: 800px; height: 600px; } */
+        #map {width: 100%; height: 100%;}
+        #map {position: absolute; top: 0; left: 0;}
+        body { font: 16px/1.4 "Helvetica Neue", Arial, sans-serif; }
+        .ghbtns { position: relative; top: 4px; margin-left: 5px; }
+        a { color: #0077ff; }
+    </style>
+</head>
+<body>
+    
+
+<div id="map"></div>
+
+    <script src="Polyline.encoded.js"></script>
+    <script src="leaflet-heat.js"></script>
+    <script>
+        function processActivities(activities) {
+            var map = new L.Map('map');
+            L.tileLayer(
+                'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                {
+                    attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+                    maxZoom: 18
+                }
+            ).addTo(map);
+
+            let lastPolyline = null;
+            for (let i = 0; i < activities.length; i++) {
+                console.log(activities[i].name);
+                // console.log(activities[i].map.summary_polyline);
+                let encoded = activities[i].map.summary_polyline;
+
+                let polyline = L.Polyline.fromEncoded(encoded).addTo(map);
+                lastPolyline = polyline;
+                let heat = L.heatLayer(polyline._latlngs, {
+                    radius: 25,
+                    blur: 15,
+                }).addTo(map);
+            }
+
+            map.fitBounds(lastPolyline.getBounds());
+        }
+
+        fetch("https://raw.githubusercontent.com/CayneByron/CayneByron.github.io/master/strava_activities.json")
+        .then(response => response.json())
+        .then(json => processActivities(json));      
+    </script>
+</body>
+</html>
